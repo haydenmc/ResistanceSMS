@@ -78,6 +78,7 @@ namespace ResistanceSMS.Helpers
 
 		public Boolean ParseJoin(Player player, String[] input)
 		{
+			new GameController(null).JoinGame(player, input[0]);
 			return false;
 		}
 

@@ -7,7 +7,7 @@
   <configSections>
         <!-- For more information on Entity Framework configuration, visit http://go.microsoft.com/fwlink/?LinkID=237468 -->
     </configSections>
-    <appSettings file="AppSettings.config">
+    <appSettings>
 	  <add key="TwilioAccountSid" value="" />
 	  <add key="TwilioAuthToken" value="" />
 	  <add key="TwilioFromNumber" value="" />
