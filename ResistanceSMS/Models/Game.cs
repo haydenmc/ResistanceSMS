@@ -21,7 +21,7 @@ namespace ResistanceSMS.Models
 		public virtual ICollection<Player> ReadyPlayers { get; set; }
 		public virtual ICollection<Player> SpyPlayers { get; set; }
 		public virtual ICollection<Player> ResistancePlayers { get; set; }
-		public Player Creator { get; set; }
+		public virtual Player Creator { get; set; }
 		public virtual ICollection<Round> Rounds { get; set; }
 		public int ResistanceScore { get; set; }
 		public int SpyScore { get; set; }
