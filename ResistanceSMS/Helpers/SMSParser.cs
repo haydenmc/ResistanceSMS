@@ -57,7 +57,8 @@ namespace ResistanceSMS.Helpers
 		}
 
 		/// <summary>
-		/// Finds the base command and throws it at function to handle it
+		/// Takes input and parses it based on the command and its parameters, then
+		/// sends it to the associated function for processing
 		/// </summary>
 		/// <param name="player">The player who sent of the command</param>
 		/// <param name="input">The message sent by the player</param>
@@ -92,6 +93,12 @@ namespace ResistanceSMS.Helpers
 			return this.InvalidCommand(player, input);
 		}
 
+		/// <summary>
+		/// Function used for creating the game, no parameters are needed
+		/// </summary>
+		/// <param name="player"></param>
+		/// <param name="input"></param>
+		/// <returns></returns>
 		public Boolean ParseCreate(Player player, String[] input)
 		{
 			//NOTE: param list in create doesn't matter, it's always true
@@ -101,22 +108,59 @@ namespace ResistanceSMS.Helpers
 			return true;
 		}
 
+		/// <summary>
+		/// Function used for joining an existing game, the first parameter should
+		/// be a number representating the game to be joined
+		/// </summary>
+		/// <param name="player"></param>
+		/// <param name="input"></param>
+		/// <returns></returns>
 		public Boolean ParseJoin(Player player, String[] input)
 		{
+			//check if there are params
+			if (input.Length <= 0)
+			{
+				throw new Exception("Exception at ParseJoin, params cannot be empty");
+			}
+
+			//Sends the game id over to the GameController
 			new GameController(null).JoinGame(player, input[0]);
-			return false;
+			return true;
 		}
 
+		/// <summary>
+		/// Function used to tell the server if you are ready or not, paramets are not
+		/// required
+		/// </summary>
+		/// <param name="player"></param>
+		/// <param name="input"></param>
+		/// <returns></returns>
 		public Boolean ParseReady(Player player, String[] input)
 		{
-			return false;
+			//TODO: pass to GameController function
+			return true;
 		}
 
+		/// <summary>
+		/// Function used to tell the server who to put on a mission, each parameter is
+		/// a name of the player
+		/// </summary>
+		/// <param name="player"></param>
+		/// <param name="input"></param>
+		/// <returns></returns>
 		public Boolean ParsePut(Player player, String[] input)
 		{
-			return false;
+			//TODO: send list of players to GameController function
+			return true;
 		}
 
+		/// <summary>
+		/// Function used to tell the server whether you voted yes or no (or variants of
+		/// them), first parameter is yes or no or variants of them
+		/// </summary>
+		/// <param name="player"></param>
+		/// <param name="input"></param>
+		/// <returns></returns>
 		public Boolean ParseVote(Player player, String[] input)
 		{
 			//check if there are params
@@ -130,10 +174,12 @@ namespace ResistanceSMS.Helpers
 
 			if(yesMatch.Success)
 			{
+				//TODO: call GameController function for yes vote
 				return true;
 			}
 			else if(noMatch.Success)
 			{
+				//TODO: call GameController function for no vote
 				return true;
 			}
 
@@ -141,31 +187,84 @@ namespace ResistanceSMS.Helpers
 			throw new Exception("Exception at ParseVote, params not valid");
 		}
 
+		/// <summary>
+		/// Function used to tell the server if you passed a mission, no parameters 
+		/// are needed
+		/// </summary>
+		/// <param name="player"></param>
+		/// <param name="input"></param>
+		/// <returns></returns>
 		public Boolean ParsePass(Player player, String[] input)
 		{
-			return false;
+			//TODO: call GameController function for passing vote
+			return true;
 		}
 
+		/// <summary>
+		/// Function used to tell the server if you failed a mission, no parameters
+		/// are needed
+		/// </summary>
+		/// <param name="player"></param>
+		/// <param name="input"></param>
+		/// <returns></returns>
 		public Boolean ParseFail(Player player, String[] input)
 		{
-			return false;
+			//TODO: call GameController function for failing vote
+			return true;
 		}
 
+		/// <summary>
+		/// Function used to tell the server to return stats to the player, parameters
+		/// determine what stats to return
+		/// </summary>
+		/// <param name="player"></param>
+		/// <param name="input"></param>
+		/// <returns></returns>
 		public Boolean ParseStats(Player player, String[] input)
 		{
-			return false;
+			//TODO: figure out what parameters to use and what stats to return
+			return true;
 		}
 
+		/// <summary>
+		/// Function used to tell the server the user wants the help page, parameters may
+		/// be used to determine subject
+		/// </summary>
+		/// <param name="player"></param>
+		/// <param name="input"></param>
+		/// <returns></returns>
 		public Boolean ParseHelp(Player player, String[] input)
 		{
-			return false;
+			//TODO: add parameter and call GameController function
+			return true;
 		}
 
+		/// <summary>
+		/// Function used to tell the server the user wants a name game, first parameter
+		/// should be the desired name
+		/// </summary>
+		/// <param name="player"></param>
+		/// <param name="input"></param>
+		/// <returns></returns>
 		public Boolean ParseNameChange(Player player, String[] input)
 		{
-			return false;
+			//check if there are params
+			if (input.Length <= 0)
+			{
+				throw new Exception("Exception at ParseNameChange, params cannot be empty");
+			}
+
+			//TODO: call GameController function, input[0] is the name
+			return true;
 		}
 
+		/// <summary>
+		/// This function is called if the command set by the player does not match
+		/// any listed command
+		/// </summary>
+		/// <param name="player"></param>
+		/// <param name="input"></param>
+		/// <returns></returns>
 		public Boolean InvalidCommand(Player player, String input)
 		{
 			System.Diagnostics.Debug.WriteLine("Missed all cases");
