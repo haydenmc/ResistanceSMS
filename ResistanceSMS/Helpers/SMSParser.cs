@@ -10,38 +10,46 @@ namespace ResistanceSMS.Helpers
 {
 	public class SMSParser
 	{
-		//Global regex
-		public const String ANY_SUBSTRING_NAME = "ANY";
-		public const String ANY_REGEX = "(?<" + ANY_SUBSTRING_NAME + ">.*)\\Z";
+		//Utils regex
+		public const String ANY_SUBSTRING_NAME	= "ANY";
+
+		public const String DELIMIT_PARAM_REGEX = "((?:[^a-zA-Z0-9]|\\s)+)";
+		public const String DELIMIT_COM_REGEX	= "([^a-zA-Z0-9]|\\s)*";
+		public const String ANY_REGEX			= DELIMIT_COM_REGEX + "(?<" + ANY_SUBSTRING_NAME + ">.*)\\z";
 		
+		public const String VOTE_YES_ALTS		= "\\A((?i)yes+|accept(s?|(ed)?)|approve(s?|d?)|y+|pass((es)?|(ed)?))\\z";
+		public const String VOTE_NO_ALTS		= "\\A((?i)no+|den(y?|(ies)?|(ied)?)|reject(s?|(ed)?)|n+|fail(s?|(ed)?))\\z";
+
 		//Command regex
 		public const String CREATE_REGEX		= "\\A(?i)create"	+ ANY_REGEX;
 		public const String JOIN_REGEX			= "\\A(?i)join"		+ ANY_REGEX;
 		public const String READY_REGEX			= "\\A(?i)ready"	+ ANY_REGEX;
 		public const String PUT_REGEX			= "\\A(?i)put"		+ ANY_REGEX;
 		public const String VOTE_REGEX			= "\\A(?i)vote"		+ ANY_REGEX;
+		public const String PASS_REGEX			= "\\A(?i)pass"		+ ANY_REGEX;
+		public const String FAIL_REGEX			= "\\A(?i)fail"		+ ANY_REGEX;
 		public const String STATS_REGEX			= "\\A(?i)stats"	+ ANY_REGEX;
 		public const String HELP_REGEX			= "\\A(?i)help"		+ ANY_REGEX;
 		public const String NAME_CHANGE_REGEX	= "\\A(?i)name"		+ ANY_REGEX;
 
-		//Utils regex
-		public const String DELIMIT_REGEX		= "[^a-zA-Z0-9]+";
 
 		//Delegates
 		public delegate Boolean ParseAction(Player player, String[] input);
 
 		//List of tuples
-		List<Tuple<String, ParseAction>> regexArray;
+		List<Tuple<String, ParseAction>> RegexArray;
 
 		public SMSParser()
 		{
-			regexArray = new List<Tuple<String, ParseAction>>()
+			RegexArray = new List<Tuple<String, ParseAction>>()
 			{
 				Tuple.Create<String, ParseAction>(CREATE_REGEX,			this.ParseCreate),
 				Tuple.Create<String, ParseAction>(JOIN_REGEX,			this.ParseJoin),
 				Tuple.Create<String, ParseAction>(READY_REGEX,			this.ParseReady),
 				Tuple.Create<String, ParseAction>(PUT_REGEX,			this.ParsePut),
 				Tuple.Create<String, ParseAction>(VOTE_REGEX,			this.ParseVote),
+				Tuple.Create<String, ParseAction>(PASS_REGEX,			this.ParsePass),
+				Tuple.Create<String, ParseAction>(FAIL_REGEX,			this.ParseFail),
 				Tuple.Create<String, ParseAction>(STATS_REGEX,			this.ParseStats),
 				Tuple.Create<String, ParseAction>(HELP_REGEX,			this.ParseHelp),
 				Tuple.Create<String, ParseAction>(NAME_CHANGE_REGEX,	this.ParseNameChange)
@@ -55,15 +63,21 @@ namespace ResistanceSMS.Helpers
 		/// <param name="input">The message sent by the player</param>
 		public Boolean ParseStringInput(Player player, String input)
 		{
-			for (int x = 0; x < this.regexArray.Count(); x++)
+			for (int x = 0; x < this.RegexArray.Count(); x++)
 			{
-				if (System.Text.RegularExpressions.Regex.IsMatch(input, this.regexArray[x].Item1))
+				Match commandMatch = new Regex(this.RegexArray[x].Item1).Match(input);
+				System.Diagnostics.Debug.WriteLine("Attempting to match regex: " + this.RegexArray[x].Item1 + " with input: " + input);
+
+				if (commandMatch.Success)
 				{
-					String paramString = new Regex(this.regexArray[x].Item1).Match(input).Groups[ANY_SUBSTRING_NAME].ToString();
-					String[] paramList = Regex.Split(paramString, DELIMIT_REGEX);
-					return this.regexArray[x].Item2(player, paramList);
+					String paramString = new Regex(this.RegexArray[x].Item1).Match(input).Groups[ANY_SUBSTRING_NAME].ToString();
+					String[] paramList = Regex.Split(paramString, DELIMIT_PARAM_REGEX);
+					System.Diagnostics.Debug.WriteLine("Param String: " + paramString);
+					for (int y = 0; y < paramList.Length; y++)
+						System.Diagnostics.Debug.WriteLine("Params" + y + ": " + paramList[y]); return this.RegexArray[x].Item2(player, paramList);
 				}
 			}
+			System.Diagnostics.Debug.WriteLine("Missed all cases");
 			return false;
 		}
 
@@ -92,6 +106,35 @@ namespace ResistanceSMS.Helpers
 		}
 
 		public Boolean ParseVote(Player player, String[] input)
+		{
+			//check if there are params
+			if(input.Length <=0)
+			{
+				throw new Exception("Exception at ParseVote, params cannot be empty");
+			}
+
+			Match yesMatch = new Regex(VOTE_YES_ALTS).Match(input[0]);
+			Match noMatch = new Regex(VOTE_NO_ALTS).Match(input[0]);
+
+			if(yesMatch.Success)
+			{
+				return true;
+			}
+			else if(noMatch.Success)
+			{
+				return true;
+			}
+
+			//no valid params, throw exception
+			throw new Exception("Exception at ParseVote, params not valid");
+		}
+
+		public Boolean ParsePass(Player player, String[] input)
+		{
+			return false;
+		}
+
+		public Boolean ParseFail(Player player, String[] input)
 		{
 			return false;
 		}

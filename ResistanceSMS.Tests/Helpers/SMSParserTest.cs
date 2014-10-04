@@ -98,6 +98,59 @@ namespace ResistanceSMS.Tests.Helpers
 		}
 
 		[TestMethod]
+		public void VoteTest()
+		{
+			//Init variables
+			// Create a test player
+			var player = this.GeneratePlayer();
+
+			//Test overall parser input
+			// Simulate 'create' command
+			var parser = new ResistanceSMS.Helpers.SMSParser();
+
+			//Asserts if the parser suceeded
+			Assert.IsTrue(parser.ParseStringInput(player, "Vote Yes"));
+			Assert.IsTrue(parser.ParseStringInput(player, "Vote YESSSSS"));
+			Assert.IsTrue(parser.ParseStringInput(player, "Vote approve"));
+			Assert.IsTrue(parser.ParseStringInput(player, "Vote ACCEpts"));
+			Assert.IsTrue(parser.ParseStringInput(player, "Vote Y"));
+			Assert.IsTrue(parser.ParseStringInput(player, "Vote passed"));
+			Assert.IsTrue(parser.ParseStringInput(player, "Vote PASSES"));
+
+			Assert.IsTrue(parser.ParseStringInput(player, "Vote NOO"));
+			Assert.IsTrue(parser.ParseStringInput(player, "Vote no"));
+			Assert.IsTrue(parser.ParseStringInput(player, "Vote NnnNNnn"));
+			Assert.IsTrue(parser.ParseStringInput(player, "Vote denied"));
+			Assert.IsTrue(parser.ParseStringInput(player, "Vote rejected"));
+			Assert.IsTrue(parser.ParseStringInput(player, "Vote fail"));
+			Assert.IsTrue(parser.ParseStringInput(player, "Vote rejects::fsfdsf"));
+
+			//Checks empty params exception
+			Boolean exceptionChecked = false;
+			try
+			{
+				parser.ParseStringInput(player, "Vote");
+			}
+			catch(Exception e)
+			{
+				exceptionChecked = true;
+			}
+			Assert.IsTrue(exceptionChecked);
+
+			//Checks invalid params exception
+			exceptionChecked = false;
+			try
+			{
+				parser.ParseStringInput(player, "Vote balblabla");
+			}
+			catch (Exception e)
+			{
+				exceptionChecked = true;
+			}
+			Assert.IsTrue(exceptionChecked);
+		}
+
+		[TestMethod]
 		public void StatsTest()
 		{
 
