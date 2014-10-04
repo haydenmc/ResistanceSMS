@@ -70,7 +70,7 @@ namespace ResistanceSMS.Helpers
 		public Boolean ParseCreate(Player player, String[] input)
 		{
 			//NOTE: param list in create doesn't matter, it's always true
-			//		if create is typed first
+			//		if "create" is typed first
 			new GameController(null).CreateGame(player);
 
 			return true;
