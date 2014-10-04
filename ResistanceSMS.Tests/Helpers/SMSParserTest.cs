@@ -79,7 +79,32 @@ namespace ResistanceSMS.Tests.Helpers
 			Assert.IsTrue(parser.ParseCreate(player, new String[2]{"asdafe", "1230"}));
 		}
 
+		[TestMethod]
 		public void JoinTest()
+		{
+
+		}
+
+		[TestMethod]
+		public void ReadyTest()
+		{
+
+		}
+
+		[TestMethod]
+		public void PutTest()
+		{
+
+		}
+
+		[TestMethod]
+		public void StatsTest()
+		{
+
+		}
+
+		[TestMethod]
+		public void HelpTest()
 		{
 
 		}
