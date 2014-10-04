@@ -10,15 +10,15 @@ namespace ResistanceSMS.Helpers
 {
 	public class SMSParser
 	{
-		//Utils regex and strings
+		//Utils regex
 		public const String ANY_SUBSTRING_NAME	= "ANY";
 
 		public const String DELIMIT_PARAM_REGEX = "((?:[^a-zA-Z0-9]|\\s)+)";
 		public const String DELIMIT_COM_REGEX	= "([^a-zA-Z0-9]|\\s)*";
 		public const String ANY_REGEX			= DELIMIT_COM_REGEX + "(?<" + ANY_SUBSTRING_NAME + ">.*)\\z";
 		
-		public const String VOTE_YES_ALTS		= "\\A((?i)yes+|accept(s?|(ed)?)|approve(s?|d?)|y+|pass((es)?|(ed)?))\\z";
-		public const String VOTE_NO_ALTS		= "\\A((?i)no+|den(y?|(ies)?|(ied)?)|reject(s?|(ed)?)|n+|fail(s?|(ed)?))\\z";
+		public const String VOTE_YES_ALTS_REGEX	= "\\A((?i)yes+|accept(s?|(ed)?)|approve(s?|d?)|y+|pass((es)?|(ed)?))\\z";
+		public const String VOTE_NO_ALTS_REGEX	= "\\A((?i)no+|den(y?|(ies)?|(ied)?)|reject(s?|(ed)?)|n+|fail(s?|(ed)?))\\z";
 
 		//Command regex
 		public const String CREATE_REGEX		= "\\A(?i)create"	+ ANY_REGEX;
@@ -65,20 +65,30 @@ namespace ResistanceSMS.Helpers
 		{
 			for (int x = 0; x < this.RegexArray.Count(); x++)
 			{
+				//Generate command matches
 				Match commandMatch = new Regex(this.RegexArray[x].Item1).Match(input);
 				System.Diagnostics.Debug.WriteLine("Attempting to match regex: " + this.RegexArray[x].Item1 + " with input: " + input);
 
 				if (commandMatch.Success)
 				{
+					//Generate regex matches
 					String paramString = new Regex(this.RegexArray[x].Item1).Match(input).Groups[ANY_SUBSTRING_NAME].ToString();
 					String[] paramList = Regex.Split(paramString, DELIMIT_PARAM_REGEX);
+					
 					System.Diagnostics.Debug.WriteLine("Param String: " + paramString);
+
+					//For debugging purposes to print out the list of params
 					for (int y = 0; y < paramList.Length; y++)
-						System.Diagnostics.Debug.WriteLine("Params" + y + ": " + paramList[y]); 
+					{
+						System.Diagnostics.Debug.WriteLine("Params" + y + ": " + paramList[y]);
+					}
+ 
+					//Runs the associated function
 					return this.RegexArray[x].Item2(player, paramList);
 				}
 			}
 
+			//Invalid command
 			return this.InvalidCommand(player, input);
 		}
 
@@ -115,8 +125,8 @@ namespace ResistanceSMS.Helpers
 				throw new Exception("Exception at ParseVote, params cannot be empty");
 			}
 
-			Match yesMatch = new Regex(VOTE_YES_ALTS).Match(input[0]);
-			Match noMatch = new Regex(VOTE_NO_ALTS).Match(input[0]);
+			Match yesMatch = new Regex(VOTE_YES_ALTS_REGEX).Match(input[0]);
+			Match noMatch = new Regex(VOTE_NO_ALTS_REGEX).Match(input[0]);
 
 			if(yesMatch.Success)
 			{
@@ -159,6 +169,7 @@ namespace ResistanceSMS.Helpers
 		public Boolean InvalidCommand(Player player, String input)
 		{
 			System.Diagnostics.Debug.WriteLine("Missed all cases");
+			//throw exception?
 			return false;
 		}
 	}
