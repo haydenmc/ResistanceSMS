@@ -16,6 +16,7 @@ namespace ResistanceSMS.Models
 			GameEnd
 		}
 		public Guid GameId { get; set; }
+		public string FriendlyId { get; set; }
 		public ICollection<Player> Players { get; set; }
 		public ICollection<Player> ReadyPlayers { get; set; }
 		public ICollection<Player> SpyPlayers { get; set; }
