@@ -93,14 +93,15 @@ namespace ResistanceSMS.Controllers
                 // transition from SelectMissionPlayers to VoteMissionApprove
                 // assign the next player to be the leader
                 AssignLeader();
-				SelectMissionPlayers();
+				//sends message to the leader to select players
+				SendSelectMissionPlayersMessage();
             }
             else if (ActiveGame.GameState == Game.GameStates.VoteMissionApprove
               && toState == Game.GameStates.VoteMissionPass)
             {
                 // transition from VoteMissionApprove to VoteMissionPass
-				Vote();
-                /*using (var db = new ApplicationDbContext())
+				this.SendVoteMessage();
+				/*using (var db = new ApplicationDbContext())
 			    {
                     var round = this.ActiveGame.Rounds.Last();
                     if (round.VoteMissionReject.Count == this.ActiveGame.Players.Count)
@@ -113,17 +114,15 @@ namespace ResistanceSMS.Controllers
                         // the 
                     }
                 }*/
-				CheckRejected();
             }
             else if (toState == Game.GameStates.GameEnd)
             {
                 if (ActiveGame.GameState == Game.GameStates.VoteMissionPass)
 				{
                     // transition from VoteMissionPass to GameEnd
-					Vote();
-					CheckFail();
+					this.SendPassOrFailMessage();
                 }
-				SendStats();
+				this.SendStatsMessage();
 			}
             ActiveGame.GameState = toState;
 		}
@@ -169,28 +168,82 @@ namespace ResistanceSMS.Controllers
 		{
 
 		}
+		
+		/// <summary>
+		/// Sends a text message to the leader to select the mission players
+		/// </summary>
+		public void SendSelectMissionPlayersMessage()
+		{
 
+		}
+
+		/// <summary>
+		/// Is called by the parser to set the mission players and increment state
+		/// </summary>
 		public void SelectMissionPlayers()
 		{
 
+			//increment
 		}
 
-		public void Vote()
+		/// <summary>
+		/// Sends a text message to all players to vote for poeple going on the
+		/// mission
+		/// </summary>
+		public void SendVoteMessage()
 		{
 
 		}
 
+		/// <summary>
+		/// Is called by the parser to inform the game that a player has voted
+		/// for the people going on the mission
+		/// </summary>
+		public void PlayerVote()
+		{
+
+		}
+
+		/// <summary>
+		/// Checks if the mission going votes have been rejected, if 5 rejections
+		/// have happened then the game is over.  This should be called by 
+		/// PlayerVote after all people has voted
+		/// </summary>
 		public void CheckRejected()
 		{
 
 		}
 
-		public void CheckFail()
+		/// <summary>
+		/// Sends a message to the mission goers to vote pass or fail
+		/// </summary>
+		public void SendPassOrFailMessage()
 		{
 
 		}
 
-		public void SendStats()
+		/// <summary>
+		/// Called by the parser to inform the game that a player on a mission has
+		/// passed or failed the mission.  the state should be incremented after
+		/// all mission goers have voted
+		/// </summary>
+		public void CheckPassOrFail()
+		{
+
+		}
+
+		/// <summary>
+		/// Stats send to the player
+		/// </summary>
+		public void SendStatsMessage()
+		{
+
+		}
+
+		/// <summary>
+		/// Called by the paser to request stats
+		/// </summary>
+		public void RequestStats()
 		{
 
 		}
