@@ -125,7 +125,7 @@ namespace ResistanceSMS.Tests.Helpers
 			Assert.IsTrue(parser.ParseStringInput(player, "Vote fail"));
 			Assert.IsTrue(parser.ParseStringInput(player, "Vote rejects::fsfdsf"));
 
-			//Checks empty params exception
+			//Checks empty params exception and empty first param
 			Boolean exceptionChecked = false;
 			try
 			{
@@ -135,7 +135,18 @@ namespace ResistanceSMS.Tests.Helpers
 			{
 				exceptionChecked = true;
 			}
-			Assert.IsTrue(exceptionChecked);
+			Assert.IsTrue(exceptionChecked, "Vote command needs a parameter");
+
+			exceptionChecked = false;
+			try
+			{
+				parser.ParseVote(player, null);
+			}
+			catch (Exception e)
+			{
+				exceptionChecked = true;
+			}
+			Assert.IsTrue(exceptionChecked, "Vote params cannot be null");
 
 			//Checks invalid params exception
 			exceptionChecked = false;
@@ -147,7 +158,7 @@ namespace ResistanceSMS.Tests.Helpers
 			{
 				exceptionChecked = true;
 			}
-			Assert.IsTrue(exceptionChecked);
+			Assert.IsTrue(exceptionChecked, "Vote params are invalid");
 		}
 
 		[TestMethod]

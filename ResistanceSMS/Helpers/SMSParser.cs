@@ -164,7 +164,7 @@ namespace ResistanceSMS.Helpers
 		public Boolean ParseVote(Player player, String[] input)
 		{
 			//check if there are params
-			if(input.Length <=0)
+			if(input == null || input[0].Equals(""))
 			{
 				throw new Exception("Exception at ParseVote, params cannot be empty");
 			}
