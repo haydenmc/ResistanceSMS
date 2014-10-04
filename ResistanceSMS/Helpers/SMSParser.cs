@@ -268,7 +268,7 @@ namespace ResistanceSMS.Helpers
 		public Boolean InvalidCommand(Player player, String input)
 		{
 			System.Diagnostics.Debug.WriteLine("Missed all cases");
-			//throw exception?
+			new GameController(player.CurrentGame).InvalidCommand(player, input);
 			return false;
 		}
 	}

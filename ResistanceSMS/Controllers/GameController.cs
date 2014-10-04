@@ -183,7 +183,9 @@ namespace ResistanceSMS.Controllers
 		/// <summary>
 		/// Is called by the parser to set the mission players and increment state
 		/// </summary>
-		public void SelectMissionPlayers()
+		/// <param name="player"></param>
+		/// <param name="players"></param>
+		public void SelectMissionPlayers(Player player, String[] players)
 		{
 
 			//increment
@@ -202,7 +204,9 @@ namespace ResistanceSMS.Controllers
 		/// Is called by the parser to inform the game that a player has voted
 		/// for the people going on the mission
 		/// </summary>
-		public void PlayerVote()
+		/// <param name="player"></param>
+		/// <param name="vote"></param>
+		public void PlayerVote(Player player, Boolean vote)
 		{
 
 		}
@@ -230,7 +234,9 @@ namespace ResistanceSMS.Controllers
 		/// passed or failed the mission.  the state should be incremented after
 		/// all mission goers have voted
 		/// </summary>
-		public void CheckPassOrFail()
+		/// <param name="player"></param>
+		/// <param name="vote"></param>
+		public void CheckPassOrFail(Player player, Boolean vote)
 		{
 
 		}
@@ -246,7 +252,18 @@ namespace ResistanceSMS.Controllers
 		/// <summary>
 		/// Called by the paser to request stats
 		/// </summary>
-		public void RequestStats()
+		/// <param name="player"></param>
+		public void RequestStats(Player player)
+		{
+
+		}
+
+		/// <summary>
+		/// Called by the parser when an invalid command is called
+		/// </summary>
+		/// <param name="player"></param>
+		/// <param name="command"></param>
+		public void InvalidCommand(Player player, String command)
 		{
 
 		}
