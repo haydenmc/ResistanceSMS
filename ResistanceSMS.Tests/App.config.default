@@ -8,9 +8,9 @@
         <!-- For more information on Entity Framework configuration, visit http://go.microsoft.com/fwlink/?LinkID=237468 -->
     </configSections>
     <appSettings>
-		<add key="TwilioAccountSid" value="AC5ec70b642b2bc665dfa88b910e486fd6" />
-		<add key="TwilioAuthToken" value="ab62000dc441a110da1553792e9a18ef" />
-		<add key="TwilioFromNumber" value="+12404927667" />
+	  <add key="TwilioAccountSid" value="" />
+	  <add key="TwilioAuthToken" value="" />
+	  <add key="TwilioFromNumber" value="" />
     </appSettings>
 
     <connectionStrings>

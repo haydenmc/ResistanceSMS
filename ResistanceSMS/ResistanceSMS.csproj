@@ -181,6 +181,10 @@
     <Compile Include="Migrations\201410041342002_AddedGameState.Designer.cs">
       <DependentUpon>201410041342002_AddedGameState.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201410041549061_FriendlyGameId.cs" />
+    <Compile Include="Migrations\201410041549061_FriendlyGameId.Designer.cs">
+      <DependentUpon>201410041549061_FriendlyGameId.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationDbContext.cs" />
     <Compile Include="Models\Game.cs" />
@@ -217,6 +221,7 @@
     <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\CollectionModelDescription.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\ApiGroup.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\Api.cshtml" />
+    <Content Include="AppSettings.config" />
     <None Include="Properties\PublishProfiles\resistancesms.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
@@ -257,6 +262,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201410041342002_AddedGameState.resx">
       <DependentUpon>201410041342002_AddedGameState.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201410041549061_FriendlyGameId.resx">
+      <DependentUpon>201410041549061_FriendlyGameId.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

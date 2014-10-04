@@ -30,9 +30,141 @@ namespace ResistanceSMS.Tests.Helpers
 		}
 
 		[TestMethod]
+		public void BasicParserTest()
+		{
+			//Init variables
+			// Create a test player
+			var player = this.GeneratePlayer();
+
+			//Test overall parser input
+			// Simulate 'create' command
+			var parser = new ResistanceSMS.Helpers.SMSParser();
+
+			//Testing all with CREATE as it doesn't modify params
+			//Test some inputs
+			Assert.IsTrue(parser.ParseStringInput(player, "CREATESDFSDGDF"));
+			Assert.IsTrue(parser.ParseStringInput(player, "cReATe:::::hi"));
+			Assert.IsTrue(parser.ParseStringInput(player, "create@test:test"));
+			Assert.IsTrue(parser.ParseStringInput(player, "create何"));
+			Assert.IsTrue(parser.ParseStringInput(player, "create!@#$#$%#$%%^&^&^*&(*)(_)+"));
+			Assert.IsTrue(parser.ParseStringInput(player, "create"));
+			Assert.IsTrue(parser.ParseStringInput(player, "create!!!!@test:test"));
+
+			Assert.IsFalse(parser.ParseStringInput(player, "CREATDFSDGDF"));
+			Assert.IsFalse(parser.ParseStringInput(player, "cr"));
+			Assert.IsFalse(parser.ParseStringInput(player, "COMMOND"));
+			Assert.IsFalse(parser.ParseStringInput(player, "何"));		
+		}
+
+		[TestMethod]
 		public void CreateTest()
 		{
+			//Init variables
 			// Create a test player
+			var player = this.GeneratePlayer();
+
+			//Test overall parser input
+			// Simulate 'create' command
+			var parser = new ResistanceSMS.Helpers.SMSParser();
+
+			//Asserts if the parser suceeded
+			Assert.IsTrue(parser.ParseStringInput(player,"Create"));
+
+			// Check to make sure that the game was created.
+			var checkPlayer = db.Players.Where(x => x.PlayerId == player.PlayerId).First();
+			var checkGames = db.Games.Select(x => x).ToList();
+			Assert.IsNotNull(checkPlayer.CurrentGame, "'Create' command did not create game.");
+
+			//Test Only ParseCreate
+			Assert.IsTrue(parser.ParseCreate(player, new String[2]{"asdafe", "1230"}));
+		}
+
+		[TestMethod]
+		public void JoinTest()
+		{
+
+		}
+
+		[TestMethod]
+		public void ReadyTest()
+		{
+
+		}
+
+		[TestMethod]
+		public void PutTest()
+		{
+
+		}
+
+		[TestMethod]
+		public void VoteTest()
+		{
+			//Init variables
+			// Create a test player
+			var player = this.GeneratePlayer();
+
+			//Test overall parser input
+			// Simulate 'create' command
+			var parser = new ResistanceSMS.Helpers.SMSParser();
+
+			//Asserts if the parser suceeded
+			Assert.IsTrue(parser.ParseStringInput(player, "Vote Yes"));
+			Assert.IsTrue(parser.ParseStringInput(player, "Vote YESSSSS"));
+			Assert.IsTrue(parser.ParseStringInput(player, "Vote approve"));
+			Assert.IsTrue(parser.ParseStringInput(player, "Vote ACCEpts"));
+			Assert.IsTrue(parser.ParseStringInput(player, "Vote Y"));
+			Assert.IsTrue(parser.ParseStringInput(player, "Vote passed"));
+			Assert.IsTrue(parser.ParseStringInput(player, "Vote PASSES"));
+
+			Assert.IsTrue(parser.ParseStringInput(player, "Vote NOO"));
+			Assert.IsTrue(parser.ParseStringInput(player, "Vote no"));
+			Assert.IsTrue(parser.ParseStringInput(player, "Vote NnnNNnn"));
+			Assert.IsTrue(parser.ParseStringInput(player, "Vote denied"));
+			Assert.IsTrue(parser.ParseStringInput(player, "Vote rejected"));
+			Assert.IsTrue(parser.ParseStringInput(player, "Vote fail"));
+			Assert.IsTrue(parser.ParseStringInput(player, "Vote rejects::fsfdsf"));
+
+			//Checks empty params exception
+			Boolean exceptionChecked = false;
+			try
+			{
+				parser.ParseStringInput(player, "Vote");
+			}
+			catch(Exception e)
+			{
+				exceptionChecked = true;
+			}
+			Assert.IsTrue(exceptionChecked);
+
+			//Checks invalid params exception
+			exceptionChecked = false;
+			try
+			{
+				parser.ParseStringInput(player, "Vote balblabla");
+			}
+			catch (Exception e)
+			{
+				exceptionChecked = true;
+			}
+			Assert.IsTrue(exceptionChecked);
+		}
+
+		[TestMethod]
+		public void StatsTest()
+		{
+
+		}
+
+		[TestMethod]
+		public void HelpTest()
+		{
+
+		}
+
+		//TODO: make it a random generator
+		public Player GeneratePlayer()
+		{
 			var player = new Player()
 			{
 				PlayerId = Guid.NewGuid(),
@@ -46,14 +178,7 @@ namespace ResistanceSMS.Tests.Helpers
 			db.Players.Add(player);
 			db.SaveChanges();
 
-			// Simulate 'create' command
-			var parser = new ResistanceSMS.Helpers.SMSParser();
-			parser.ParseStringInput(player,"Create");
-
-			// Check to make sure that the game was created.
-			var checkPlayer = db.Players.Where(x => x.PlayerId == player.PlayerId).First();
-			var checkGames = db.Games.Select(x => x).ToList();
-			Assert.IsNotNull(checkPlayer.CurrentGame, "'Create' command did not create game.");
+			return player;
 		}
 	}
 }

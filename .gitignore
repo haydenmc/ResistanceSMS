@@ -154,3 +154,12 @@ $RECYCLE.BIN/
 
 # Mac desktop service store files
 .DS_Store
+
+# Ignore localdb
+*.mdf
+*.ldf
+
+# This contains sensitive stuff like Twilio API keys
+/ResistanceSMS/AppSettings.config
+/ResistanceSMS.Tests/appSettings.config
+/ResistanceSMS.Tests/App.config

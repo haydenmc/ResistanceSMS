@@ -1,6 +1,7 @@
 ﻿using ResistanceSMS.Models;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Web;
 
@@ -28,10 +29,19 @@ namespace ResistanceSMS.Controllers
 
 		public void CreateGame(Player creator)
 		{
+			// Generate a random friendly ID
+			var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+			var random = new Random();
+			var friendlyId = new string(
+				Enumerable.Repeat(chars, 8)
+							.Select(s => s[random.Next(s.Length)])
+							.ToArray());
+
 			var player = _Db.Players.Where(p => p.PlayerId == creator.PlayerId).FirstOrDefault();
 			var game = new Game()
 			{
 				GameId = Guid.NewGuid(),
+				FriendlyId = friendlyId, // TODO: Make sure this doesn't collide
 				Creator = player,
 				Players = new List<Player>(),
 				ReadyPlayers = new List<Player>(),
@@ -49,8 +59,16 @@ namespace ResistanceSMS.Controllers
 			_Db.SaveChanges();
 		}
 
-		public void StateTransition(Game.GameStates toState)
-        {
+		public void JoinGame(Player joiner, String friendlyGameId)
+		{
+			var matchingGame = _Db.Games.Where(g => g.FriendlyId == friendlyGameId.ToUpper()).FirstOrDefault();
+			if (matchingGame == null)
+			{
+
+			}
+		}
+
+		public void StateTransition(Game.GameStates toState) {
 			if (ActiveGame.GameState == Game.GameStates.Waiting
 				&& toState == Game.GameStates.SelectMissionPlayers)
 			{

@@ -16,7 +16,8 @@ namespace ResistanceSMS.Models
 			GameEnd
 		}
 		public Guid GameId { get; set; }
-		public virtual ICollection<Player> Players { get; set; }
+        public string FriendlyId { get; set; }
+        public virtual ICollection<Player> Players { get; set; }
 		public virtual ICollection<Player> ReadyPlayers { get; set; }
 		public virtual ICollection<Player> SpyPlayers { get; set; }
 		public virtual ICollection<Player> ResistancePlayers { get; set; }
