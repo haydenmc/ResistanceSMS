@@ -1,4 +1,5 @@
-﻿using ResistanceSMS.Models;
+﻿using ResistanceSMS.Controllers;
+using ResistanceSMS.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,9 +45,11 @@ namespace ResistanceSMS.Helpers
 			};
 		}
 
-		/**
-		 * Finds the base command and throws it at function to handle it
-		 **/
+		/// <summary>
+		/// Finds the base command and throws it at function to handle it
+		/// </summary>
+		/// <param name="player">The player who sent of the command</param>
+		/// <param name="input">The message sent by the player</param>
 		public void ParseStringInput(Player player, String input)
 		{
 			for (int x = 0; x < this.regexArray.Count(); x++)
@@ -57,10 +60,11 @@ namespace ResistanceSMS.Helpers
 				}
 			}
 		}
-
+		
 		public void ParseCreate(Player player, String input)
 		{
-
+			var gc = new GameController(null);
+			gc.CreateGame(player);
 		}
 
 		public void ParseJoin(Player player, String input)

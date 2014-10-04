@@ -7,6 +7,14 @@ namespace ResistanceSMS.Models
 {
 	public class Game
 	{
+		public enum GameStates
+		{
+			Waiting,
+			SelectMissionPlayers,
+			VoteMissionApprove,
+			VoteMissionPass,
+			GameEnd
+		}
 		public Guid GameId { get; set; }
 		public ICollection<Player> Players { get; set; }
 		public ICollection<Player> ReadyPlayers { get; set; }
@@ -19,5 +27,6 @@ namespace ResistanceSMS.Models
 		public DateTimeOffset LastActivityTime { get; set; }
 		public DateTimeOffset CreateTime { get; set; }
 		public bool GameStarted { get; set; }
+		public GameStates GameState { get; set; }
 	}
 }

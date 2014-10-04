@@ -165,6 +165,7 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\SampleDirection.cs" />
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
+    <Compile Include="Controllers\GameController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\SMSController.cs" />
     <Compile Include="Filters\BasicAuthenticator.cs" />
@@ -175,6 +176,10 @@
     <Compile Include="Migrations\201410040400400_Initial.cs" />
     <Compile Include="Migrations\201410040400400_Initial.Designer.cs">
       <DependentUpon>201410040400400_Initial.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201410041342002_AddedGameState.cs" />
+    <Compile Include="Migrations\201410041342002_AddedGameState.Designer.cs">
+      <DependentUpon>201410041342002_AddedGameState.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationDbContext.cs" />
@@ -249,6 +254,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201410040400400_Initial.resx">
       <DependentUpon>201410040400400_Initial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201410041342002_AddedGameState.resx">
+      <DependentUpon>201410041342002_AddedGameState.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
