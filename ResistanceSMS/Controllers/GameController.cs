@@ -132,7 +132,7 @@ namespace ResistanceSMS.Controllers
         //Helper Methods
         public void JoinGame()
         {
-            
+           // _Db.Players.Where
         }
 
         public void AssignTeams()
