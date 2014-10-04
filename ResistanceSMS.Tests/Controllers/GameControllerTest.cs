@@ -29,6 +29,60 @@ namespace ResistanceSMS.Tests.Controllers
         }
 
         [TestMethod]
+        public void TestTeamAssignment()
+        {
+            Game g = new Game()
+            {
+                CreateTime = DateTimeOffset.Now,
+                GameState = Game.GameStates.Waiting,
+                Players = new List<Player>()
+                {
+                    new Player() {
+                        PlayerId = Guid.NewGuid(),
+                        TurnOrder = 0
+                    },
+                    new Player() {
+                        PlayerId = Guid.NewGuid(),
+                        TurnOrder = 1
+                    },
+                    new Player() {
+                        PlayerId = Guid.NewGuid(),
+                        TurnOrder = 2
+                    },
+                    new Player() {
+                        PlayerId = Guid.NewGuid(),
+                        TurnOrder = 3
+                    },
+                    new Player() {
+                        PlayerId = Guid.NewGuid(),
+                        TurnOrder = 4
+                    }
+                },
+                Rounds = new List<Round>()
+                {
+                    new Round() {
+                        RoundId = Guid.NewGuid()
+                    }
+                }
+            };
+            this.db.Games.Add(g);
+
+            this.db.SaveChanges();
+
+            GameController gc = new GameController(g);
+            gc.AssignTeams();
+            Assert.IsTrue(gc.ActiveGame.SpyPlayers.Count == 2);
+            Assert.IsTrue(gc.ActiveGame.ResistancePlayers.Count == 3);
+            Assert.IsTrue(gc.ActiveGame.Players.Count == 5);
+            
+            var playerList = gc.ActiveGame.Players.OrderBy(p => p.TurnOrder).ToList();
+            for (int i=0;i<playerList.Count;i++) {
+                var player = playerList[i];
+                Assert.IsTrue(player.TurnOrder == i, "Players are not in correct turn order.");
+            }
+        }
+        
+        [TestMethod]
         public void TestLeaderSelect()
         {
             Game g = new Game()
