@@ -158,3 +158,8 @@ $RECYCLE.BIN/
 # Ignore localdb
 *.mdf
 *.ldf
+
+# This contains sensitive stuff like Twilio API keys
+/ResistanceSMS/AppSettings.config
+/ResistanceSMS.Tests/appSettings.config
+/ResistanceSMS.Tests/App.config
