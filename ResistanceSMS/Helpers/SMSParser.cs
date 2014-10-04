@@ -174,12 +174,12 @@ namespace ResistanceSMS.Helpers
 
 			if(yesMatch.Success)
 			{
-				//TODO: call GameController function for yes vote
+				new GameController(player.CurrentGame).PlayerVote(player, true);
 				return true;
 			}
 			else if(noMatch.Success)
 			{
-				//TODO: call GameController function for no vote
+				new GameController(player.CurrentGame).PlayerVote(player, false);
 				return true;
 			}
 
@@ -196,7 +196,7 @@ namespace ResistanceSMS.Helpers
 		/// <returns></returns>
 		public Boolean ParsePass(Player player, String[] input)
 		{
-			//TODO: call GameController function for passing vote
+			new GameController(player.CurrentGame).CheckPassOrFail(player, true);
 			return true;
 		}
 
@@ -209,7 +209,7 @@ namespace ResistanceSMS.Helpers
 		/// <returns></returns>
 		public Boolean ParseFail(Player player, String[] input)
 		{
-			//TODO: call GameController function for failing vote
+			new GameController(player.CurrentGame).CheckPassOrFail(player, false);
 			return true;
 		}
 
