@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30723.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResistanceSMS", "ResistanceSMS\ResistanceSMS.csproj", "{00B1D137-B35D-44BC-A69B-270699A641ED}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResistanceSMS.Tests", "ResistanceSMS.Tests\ResistanceSMS.Tests.csproj", "{939B6806-9A49-409D-A90E-330E4D76E682}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{00B1D137-B35D-44BC-A69B-270699A641ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00B1D137-B35D-44BC-A69B-270699A641ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00B1D137-B35D-44BC-A69B-270699A641ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00B1D137-B35D-44BC-A69B-270699A641ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{939B6806-9A49-409D-A90E-330E4D76E682}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{939B6806-9A49-409D-A90E-330E4D76E682}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{939B6806-9A49-409D-A90E-330E4D76E682}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{939B6806-9A49-409D-A90E-330E4D76E682}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
