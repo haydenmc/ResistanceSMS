@@ -3,11 +3,13 @@ using ResistanceSMS.Helpers;
 using ResistanceSMS.Models;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Xml.Linq;
+using Twilio;
 using Twilio.TwiML;
 
 namespace ResistanceSMS.Controllers
@@ -15,6 +17,10 @@ namespace ResistanceSMS.Controllers
 	public class SMSController : ApiController
 	{
 		private SMSParser Parser = new SMSParser();
+
+		public static Lazy<TwilioRestClient> TwilioClient = new Lazy<TwilioRestClient>(
+			() => new TwilioRestClient(ConfigurationManager.AppSettings["TwilioAccountSid"], ConfigurationManager.AppSettings["TwilioAuthToken"])
+		);
 
 		// POST api/SMS
 		[BasicAuthenticator]

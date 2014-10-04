@@ -1,6 +1,7 @@
 ﻿using ResistanceSMS.Models;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Web;
 
@@ -8,20 +9,39 @@ namespace ResistanceSMS.Controllers
 {
 	public class GameController
 	{
-		public Game ActiveGame { get; set; }
+        private ApplicationDbContext _Db = new ApplicationDbContext();
+        private Guid _ActiveGameId;
+        public Game ActiveGame
+        {
+            get
+            {
+                return _Db.Games.Where(g => g.GameId == this._ActiveGameId).FirstOrDefault();
+            }
+            set
+            {
+                this._ActiveGameId = value.GameId;
+            }
+        }
 		public GameController(Game game)
 		{
-			this.ActiveGame = game;
+            this.ActiveGame = this._Db.Games.Where(g => g.GameId == game.GameId).FirstOrDefault();
 		}
 
 		public void CreateGame(Player creator)
 		{
-			using (var db = new ApplicationDbContext())
-			{
-				var player = db.Players.Where(p => p.PlayerId == creator.PlayerId).FirstOrDefault();
+			// Generate a random friendly ID
+			var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+			var random = new Random();
+			var friendlyId = new string(
+				Enumerable.Repeat(chars, 8)
+							.Select(s => s[random.Next(s.Length)])
+							.ToArray());
+
+			var player = _Db.Players.Where(p => p.PlayerId == creator.PlayerId).FirstOrDefault();
 				var game = new Game()
 				{
 					GameId = Guid.NewGuid(),
+				FriendlyId = friendlyId, // TODO: Make sure this doesn't collide
 					Creator = player,
 					Players = new List<Player>(),
 					ReadyPlayers = new List<Player>(),
@@ -34,9 +54,17 @@ namespace ResistanceSMS.Controllers
 					CreateTime = DateTimeOffset.Now,
 					LastActivityTime = DateTimeOffset.Now
 				};
-				db.Games.Add(game);
+			_Db.Games.Add(game);
 				player.CurrentGame = game;
-				db.SaveChanges();
+			_Db.SaveChanges();
+		}
+
+		public void JoinGame(Player joiner, String friendlyGameId)
+		{
+			var matchingGame = _Db.Games.Where(g => g.FriendlyId == friendlyGameId.ToUpper()).FirstOrDefault();
+			if (matchingGame == null)
+			{
+
 			}
 		}
 
@@ -88,14 +116,46 @@ namespace ResistanceSMS.Controllers
             else if (toState == Game.GameStates.GameEnd)
             {
                 if (ActiveGame.GameState == Game.GameStates.VoteMissionPass)
-                {
+			{
                     // transition from VoteMissionPass to GameEnd
                  //   Vote();
                 //    CheckFail();
                 }
              //   SendStats();
-            }
+			}
             ActiveGame.GameState = toState;
+		}
+
+        //Helper Methods
+        public void JoinGame()
+        {
+            
+        }
+
+        public void AssignTeams()
+        {
+        
+        }
+        
+        public void AssignLeader()
+        {
+            Random rnd = new Random();
+            if (this.ActiveGame.Rounds.Last().Leader == null)
+            {
+                this.ActiveGame.Rounds.Last().Leader = this.ActiveGame.Players.First();
+            }
+            else
+            {
+                var lastLeader = this.ActiveGame.Rounds.Last().Leader;
+                var leaderIndex = this.ActiveGame.Players.ToList().IndexOf(lastLeader);
+                leaderIndex++;
+                if (leaderIndex >= this.ActiveGame.Players.Count)
+                {
+                    leaderIndex = 0;
+                }
+                var nextLeader = this.ActiveGame.Players.ToList()[leaderIndex];
+            }
+            _Db.SaveChanges();
         }
 	}
 }

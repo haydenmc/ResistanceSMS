@@ -10,35 +10,46 @@ namespace ResistanceSMS.Helpers
 {
 	public class SMSParser
 	{
-		//Global regex
-		public const String ANY_SUBSTRING_NAME = "ANY";
-		public const String ANY_REGEX = "(?<" + ANY_SUBSTRING_NAME + ">.*)\\Z";
+		//Utils regex
+		public const String ANY_SUBSTRING_NAME	= "ANY";
 		
+		public const String DELIMIT_PARAM_REGEX = "((?:[^a-zA-Z0-9]|\\s)+)";
+		public const String DELIMIT_COM_REGEX	= "([^a-zA-Z0-9]|\\s)*";
+		public const String ANY_REGEX			= DELIMIT_COM_REGEX + "(?<" + ANY_SUBSTRING_NAME + ">.*)\\z";
+		
+		public const String VOTE_YES_ALTS_REGEX	= "\\A((?i)yes+|accept(s?|(ed)?)|approve(s?|d?)|y+|pass((es)?|(ed)?))\\z";
+		public const String VOTE_NO_ALTS_REGEX	= "\\A((?i)no+|den(y?|(ies)?|(ied)?)|reject(s?|(ed)?)|n+|fail(s?|(ed)?))\\z";
+
 		//Command regex
 		public const String CREATE_REGEX		= "\\A(?i)create"	+ ANY_REGEX;
 		public const String JOIN_REGEX			= "\\A(?i)join"		+ ANY_REGEX;
 		public const String READY_REGEX			= "\\A(?i)ready"	+ ANY_REGEX;
 		public const String PUT_REGEX			= "\\A(?i)put"		+ ANY_REGEX;
 		public const String VOTE_REGEX			= "\\A(?i)vote"		+ ANY_REGEX;
+		public const String PASS_REGEX			= "\\A(?i)pass"		+ ANY_REGEX;
+		public const String FAIL_REGEX			= "\\A(?i)fail"		+ ANY_REGEX;
 		public const String STATS_REGEX			= "\\A(?i)stats"	+ ANY_REGEX;
 		public const String HELP_REGEX			= "\\A(?i)help"		+ ANY_REGEX;
 		public const String NAME_CHANGE_REGEX	= "\\A(?i)name"		+ ANY_REGEX;
 
+
 		//Delegates
-		public delegate void ParseAction(Player player, String input);
+		public delegate Boolean ParseAction(Player player, String[] input);
 
 		//List of tuples
-		List<Tuple<String, ParseAction>> regexArray;
+		List<Tuple<String, ParseAction>> RegexArray;
 
 		public SMSParser()
 		{
-			regexArray = new List<Tuple<String, ParseAction>>()
+			RegexArray = new List<Tuple<String, ParseAction>>()
 			{
 				Tuple.Create<String, ParseAction>(CREATE_REGEX,			this.ParseCreate),
 				Tuple.Create<String, ParseAction>(JOIN_REGEX,			this.ParseJoin),
 				Tuple.Create<String, ParseAction>(READY_REGEX,			this.ParseReady),
 				Tuple.Create<String, ParseAction>(PUT_REGEX,			this.ParsePut),
 				Tuple.Create<String, ParseAction>(VOTE_REGEX,			this.ParseVote),
+				Tuple.Create<String, ParseAction>(PASS_REGEX,			this.ParsePass),
+				Tuple.Create<String, ParseAction>(FAIL_REGEX,			this.ParseFail),
 				Tuple.Create<String, ParseAction>(STATS_REGEX,			this.ParseStats),
 				Tuple.Create<String, ParseAction>(HELP_REGEX,			this.ParseHelp),
 				Tuple.Create<String, ParseAction>(NAME_CHANGE_REGEX,	this.ParseNameChange)
@@ -46,60 +57,219 @@ namespace ResistanceSMS.Helpers
 		}
 
 		/// <summary>
-		/// Finds the base command and throws it at function to handle it
+		/// Takes input and parses it based on the command and its parameters, then
+		/// sends it to the associated function for processing
 		/// </summary>
 		/// <param name="player">The player who sent of the command</param>
 		/// <param name="input">The message sent by the player</param>
-		public void ParseStringInput(Player player, String input)
+		public Boolean ParseStringInput(Player player, String input)
 		{
-			for (int x = 0; x < this.regexArray.Count(); x++)
+			for (int x = 0; x < this.RegexArray.Count(); x++)
 			{
-				if (System.Text.RegularExpressions.Regex.IsMatch(input, this.regexArray[x].Item1))
+				//Generate command matches
+				Match commandMatch = new Regex(this.RegexArray[x].Item1).Match(input);
+				System.Diagnostics.Debug.WriteLine("Attempting to match regex: " + this.RegexArray[x].Item1 + " with input: " + input);
+
+				if (commandMatch.Success)
 				{
-					this.regexArray[x].Item2(player, new Regex(this.regexArray[x].Item1).Match(input).Groups[ANY_SUBSTRING_NAME].ToString());
+					//Generate regex matches
+					String paramString = new Regex(this.RegexArray[x].Item1).Match(input).Groups[ANY_SUBSTRING_NAME].ToString();
+					String[] paramList = Regex.Split(paramString, DELIMIT_PARAM_REGEX);
+					
+					System.Diagnostics.Debug.WriteLine("Param String: " + paramString);
+
+					//For debugging purposes to print out the list of params
+					for (int y = 0; y < paramList.Length; y++)
+					{
+						System.Diagnostics.Debug.WriteLine("Params" + y + ": " + paramList[y]);
 				}
+ 
+					//Runs the associated function
+					return this.RegexArray[x].Item2(player, paramList);
 			}
 		}
 		
-		public void ParseCreate(Player player, String input)
-		{
-			var gc = new GameController(null);
-			gc.CreateGame(player);
+			//Invalid command
+			return this.InvalidCommand(player, input);
 		}
 
-		public void ParseJoin(Player player, String input)
+		/// <summary>
+		/// Function used for creating the game, no parameters are needed
+		/// </summary>
+		/// <param name="player"></param>
+		/// <param name="input"></param>
+		/// <returns></returns>
+		public Boolean ParseCreate(Player player, String[] input)
 		{
-            var gc = new GameController(player.CurrentGame);
+			//NOTE: param list in create doesn't matter, it's always true
+			//		if "create" is typed first
+			new GameController(null).CreateGame(player);
+
+			return true;
 		}
 
-		public void ParseReady(Player player, String input)
+		/// <summary>
+		/// Function used for joining an existing game, the first parameter should
+		/// be a number representating the game to be joined
+		/// </summary>
+		/// <param name="player"></param>
+		/// <param name="input"></param>
+		/// <returns></returns>
+		public Boolean ParseJoin(Player player, String[] input)
 		{
+			//check if there are params
+			if (input.Length <= 0)
+			{
+				throw new Exception("Exception at ParseJoin, params cannot be empty");
+			}
 
+			//Sends the game id over to the GameController
+			new GameController(null).JoinGame(player, input[0]);
+			return true;
 		}
 
-		public void ParsePut(Player player, String input)
+		/// <summary>
+		/// Function used to tell the server if you are ready or not, paramets are not
+		/// required
+		/// </summary>
+		/// <param name="player"></param>
+		/// <param name="input"></param>
+		/// <returns></returns>
+		public Boolean ParseReady(Player player, String[] input)
 		{
-
+			//TODO: pass to GameController function
+			return true;
 		}
 
-		public void ParseVote(Player player, String input)
+		/// <summary>
+		/// Function used to tell the server who to put on a mission, each parameter is
+		/// a name of the player
+		/// </summary>
+		/// <param name="player"></param>
+		/// <param name="input"></param>
+		/// <returns></returns>
+		public Boolean ParsePut(Player player, String[] input)
 		{
-
+			//TODO: send list of players to GameController function
+			return true;
 		}
 
-		public void ParseStats(Player player, String input)
+		/// <summary>
+		/// Function used to tell the server whether you voted yes or no (or variants of
+		/// them), first parameter is yes or no or variants of them
+		/// </summary>
+		/// <param name="player"></param>
+		/// <param name="input"></param>
+		/// <returns></returns>
+		public Boolean ParseVote(Player player, String[] input)
 		{
-
+			//check if there are params
+			if(input.Length <=0)
+			{
+				throw new Exception("Exception at ParseVote, params cannot be empty");
 		}
 
-		public void ParseHelp(Player player, String input)
-		{
+			Match yesMatch = new Regex(VOTE_YES_ALTS_REGEX).Match(input[0]);
+			Match noMatch = new Regex(VOTE_NO_ALTS_REGEX).Match(input[0]);
 
+			if(yesMatch.Success)
+			{
+				//TODO: call GameController function for yes vote
+				return true;
+			}
+			else if(noMatch.Success)
+		{
+				//TODO: call GameController function for no vote
+				return true;
+			}
+
+			//no valid params, throw exception
+			throw new Exception("Exception at ParseVote, params not valid");
 		}
 
-		public void ParseNameChange(Player player, String input)
+		/// <summary>
+		/// Function used to tell the server if you passed a mission, no parameters 
+		/// are needed
+		/// </summary>
+		/// <param name="player"></param>
+		/// <param name="input"></param>
+		/// <returns></returns>
+		public Boolean ParsePass(Player player, String[] input)
 		{
+			//TODO: call GameController function for passing vote
+			return true;
+		}
 
+		/// <summary>
+		/// Function used to tell the server if you failed a mission, no parameters
+		/// are needed
+		/// </summary>
+		/// <param name="player"></param>
+		/// <param name="input"></param>
+		/// <returns></returns>
+		public Boolean ParseFail(Player player, String[] input)
+		{
+			//TODO: call GameController function for failing vote
+			return true;
+		}
+
+		/// <summary>
+		/// Function used to tell the server to return stats to the player, parameters
+		/// determine what stats to return
+		/// </summary>
+		/// <param name="player"></param>
+		/// <param name="input"></param>
+		/// <returns></returns>
+		public Boolean ParseStats(Player player, String[] input)
+		{
+			//TODO: figure out what parameters to use and what stats to return
+			return true;
+		}
+
+		/// <summary>
+		/// Function used to tell the server the user wants the help page, parameters may
+		/// be used to determine subject
+		/// </summary>
+		/// <param name="player"></param>
+		/// <param name="input"></param>
+		/// <returns></returns>
+		public Boolean ParseHelp(Player player, String[] input)
+		{
+			//TODO: add parameter and call GameController function
+			return true;
+		}
+
+		/// <summary>
+		/// Function used to tell the server the user wants a name game, first parameter
+		/// should be the desired name
+		/// </summary>
+		/// <param name="player"></param>
+		/// <param name="input"></param>
+		/// <returns></returns>
+		public Boolean ParseNameChange(Player player, String[] input)
+		{
+			//check if there are params
+			if (input.Length <= 0)
+		{
+				throw new Exception("Exception at ParseNameChange, params cannot be empty");
+			}
+
+			//TODO: call GameController function, input[0] is the name
+			return true;
+		}
+
+		/// <summary>
+		/// This function is called if the command set by the player does not match
+		/// any listed command
+		/// </summary>
+		/// <param name="player"></param>
+		/// <param name="input"></param>
+		/// <returns></returns>
+		public Boolean InvalidCommand(Player player, String input)
+		{
+			System.Diagnostics.Debug.WriteLine("Missed all cases");
+			//throw exception?
+			return false;
 		}
 	}
 }
