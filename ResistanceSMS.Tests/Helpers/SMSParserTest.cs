@@ -48,12 +48,15 @@ namespace ResistanceSMS.Tests.Helpers
 
 			// Simulate 'create' command
 			var parser = new ResistanceSMS.Helpers.SMSParser();
-			parser.ParseStringInput(player,"Create");
+			Boolean returnBool = parser.ParseStringInput(player,"Create");
 
 			// Check to make sure that the game was created.
 			var checkPlayer = db.Players.Where(x => x.PlayerId == player.PlayerId).First();
 			var checkGames = db.Games.Select(x => x).ToList();
 			Assert.IsNotNull(checkPlayer.CurrentGame, "'Create' command did not create game.");
+
+			//Asserts if the parser suceeded
+			Assert.IsTrue(returnBool);
 		}
 	}
 }
