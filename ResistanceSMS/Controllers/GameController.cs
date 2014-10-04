@@ -83,7 +83,6 @@ namespace ResistanceSMS.Controllers
                 {
                     // transition from Waiting to SelectMissionPlayers
                     // needs to join game, assign a random leader and assign teams
-                    JoinGame();
                     AssignLeader();
                     AssignTeams();
                 }
@@ -94,26 +93,12 @@ namespace ResistanceSMS.Controllers
                 // transition from SelectMissionPlayers to VoteMissionApprove
                 // assign the next player to be the leader
                 AssignLeader();
-              //  SelectMissionPlayers();
+                SelectMissionPlayers();
             }
             else if (ActiveGame.GameState == Game.GameStates.VoteMissionApprove
               && toState == Game.GameStates.VoteMissionPass)
             {
                 // transition from VoteMissionApprove to VoteMissionPass
-              //  Vote();
-                /*using (var db = new ApplicationDbContext())
-			    {
-                    var round = this.ActiveGame.Rounds.Last();
-                    if (round.VoteMissionReject.Count == this.ActiveGame.Players.Count)
-                    {
-                        // the number of rejection is the same of the number of player in the game
-                        // the game ends directly
-                        StateTransition(Game.GameStates.GameEnd);
-                    } else if (round.VoteMissionReject.Count )
-                    {
-                        // the 
-                    }
-                }*/
               //  CheckRejected();
             }
             else if (toState == Game.GameStates.GameEnd)
@@ -169,6 +154,10 @@ namespace ResistanceSMS.Controllers
                 lastRound.Leader = nextLeader;
             }
             _Db.SaveChanges();
+        }
+        public void SelectMissionPlayers()
+        {
+
         }
 
 		/// <summary>
