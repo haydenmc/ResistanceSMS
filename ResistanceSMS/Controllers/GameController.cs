@@ -78,12 +78,11 @@ namespace ResistanceSMS.Controllers
             if (toState == Game.GameStates.SelectMissionPlayers)
             {
                 // Every transition to SelectMissionPlayers means creating a new round.
-               // CreateNewRound();
+				CreateNewRound();
                 if (ActiveGame.GameState == Game.GameStates.Waiting)
                 {
                     // transition from Waiting to SelectMissionPlayers
                     // needs to join game, assign a random leader and assign teams
-                    JoinGame();
                     AssignLeader();
                     AssignTeams();
                 }
@@ -94,13 +93,13 @@ namespace ResistanceSMS.Controllers
                 // transition from SelectMissionPlayers to VoteMissionApprove
                 // assign the next player to be the leader
                 AssignLeader();
-              //  SelectMissionPlayers();
+				SelectMissionPlayers();
             }
             else if (ActiveGame.GameState == Game.GameStates.VoteMissionApprove
               && toState == Game.GameStates.VoteMissionPass)
             {
                 // transition from VoteMissionApprove to VoteMissionPass
-              //  Vote();
+				Vote();
                 /*using (var db = new ApplicationDbContext())
 			    {
                     var round = this.ActiveGame.Rounds.Last();
@@ -114,27 +113,22 @@ namespace ResistanceSMS.Controllers
                         // the 
                     }
                 }*/
-              //  CheckRejected();
+				CheckRejected();
             }
             else if (toState == Game.GameStates.GameEnd)
             {
                 if (ActiveGame.GameState == Game.GameStates.VoteMissionPass)
-			{
+				{
                     // transition from VoteMissionPass to GameEnd
-                 //   Vote();
-                //    CheckFail();
+					Vote();
+					CheckFail();
                 }
-             //   SendStats();
+				SendStats();
 			}
             ActiveGame.GameState = toState;
 		}
 
         //Helper Methods
-        public void JoinGame()
-        {
-           // _Db.Players.Where
-        }
-
         public void AssignTeams()
         {
             var numSpies = (int)Math.Round(Math.Sqrt(2 * (this.ActiveGame.Players.Count - 3)));
@@ -170,6 +164,36 @@ namespace ResistanceSMS.Controllers
             }
             _Db.SaveChanges();
         }
+
+		public void CreateNewRound()
+		{
+
+		}
+
+		public void SelectMissionPlayers()
+		{
+
+		}
+
+		public void Vote()
+		{
+
+		}
+
+		public void CheckRejected()
+		{
+
+		}
+
+		public void CheckFail()
+		{
+
+		}
+
+		public void SendStats()
+		{
+
+		}
 
 		/// <summary>
 		/// Sends a text message to the specified list of players.
