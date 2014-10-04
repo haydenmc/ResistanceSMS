@@ -144,7 +144,10 @@ namespace ResistanceSMS.Controllers
             this.ActiveGame.SpyPlayers = this.ActiveGame.Players.Take(numSpies).ToList();
             this.ActiveGame.ReadyPlayers = this.ActiveGame.Players.Skip(numSpies).ToList();
             this.ActiveGame.Players = this.ActiveGame.Players.OrderBy(x => rnd.Next()).ToList();
-            
+            for (int i = 0; i < this.ActiveGame.Players.Count; i++)
+            {
+                this.ActiveGame.Players.ElementAt(i).TurnOrder = i;
+            }
             _Db.SaveChanges();
         }
         
