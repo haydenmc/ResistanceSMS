@@ -82,12 +82,12 @@ namespace ResistanceSMS.Helpers
 					for (int y = 0; y < paramList.Length; y++)
 					{
 						System.Diagnostics.Debug.WriteLine("Params" + y + ": " + paramList[y]);
-				}
+					}
  
 					//Runs the associated function
 					return this.RegexArray[x].Item2(player, paramList);
+				}
 			}
-		}
 		
 			//Invalid command
 			return this.InvalidCommand(player, input);
@@ -167,7 +167,7 @@ namespace ResistanceSMS.Helpers
 			if(input.Length <=0)
 			{
 				throw new Exception("Exception at ParseVote, params cannot be empty");
-		}
+			}
 
 			Match yesMatch = new Regex(VOTE_YES_ALTS_REGEX).Match(input[0]);
 			Match noMatch = new Regex(VOTE_NO_ALTS_REGEX).Match(input[0]);
@@ -178,7 +178,7 @@ namespace ResistanceSMS.Helpers
 				return true;
 			}
 			else if(noMatch.Success)
-		{
+			{
 				//TODO: call GameController function for no vote
 				return true;
 			}
