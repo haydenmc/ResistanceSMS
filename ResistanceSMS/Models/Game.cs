@@ -16,12 +16,12 @@ namespace ResistanceSMS.Models
 			GameEnd
 		}
 		public Guid GameId { get; set; }
-		public ICollection<Player> Players { get; set; }
-		public ICollection<Player> ReadyPlayers { get; set; }
-		public ICollection<Player> SpyPlayers { get; set; }
-		public ICollection<Player> ResistancePlayers { get; set; }
+		public virtual ICollection<Player> Players { get; set; }
+		public virtual ICollection<Player> ReadyPlayers { get; set; }
+		public virtual ICollection<Player> SpyPlayers { get; set; }
+		public virtual ICollection<Player> ResistancePlayers { get; set; }
 		public Player Creator { get; set; }
-		public ICollection<Round> Rounds { get; set; }
+		public virtual ICollection<Round> Rounds { get; set; }
 		public int ResistanceScore { get; set; }
 		public int SpyScore { get; set; }
 		public DateTimeOffset LastActivityTime { get; set; }
