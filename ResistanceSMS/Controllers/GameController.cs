@@ -144,26 +144,29 @@ namespace ResistanceSMS.Controllers
             this.ActiveGame.SpyPlayers = this.ActiveGame.Players.Take(numSpies).ToList();
             this.ActiveGame.ReadyPlayers = this.ActiveGame.Players.Skip(numSpies).ToList();
             this.ActiveGame.Players = this.ActiveGame.Players.OrderBy(x => rnd.Next()).ToList();
+            
             _Db.SaveChanges();
         }
         
         public void AssignLeader()
         {
+            var lastRound = this.ActiveGame.Rounds.OrderBy(r => r.RoundNumber).Last();
             if (this.ActiveGame.Rounds.Last().Leader == null)
             {
-                this.ActiveGame.Rounds.Last().Leader = this.ActiveGame.Players.First();
+                lastRound.Leader = this.ActiveGame.Players.OrderBy(p => p.TurnOrder).First();
             }
             else
             {
-                var lastLeader = this.ActiveGame.Rounds.Last().Leader;
-                var leaderIndex = this.ActiveGame.Players.ToList().IndexOf(lastLeader);
+                var lastLeader = lastRound.Leader;
+                var playerList = this.ActiveGame.Players.OrderBy(p => p.TurnOrder).ToList();
+                var leaderIndex = playerList.IndexOf(lastLeader);
                 leaderIndex++;
-                if (leaderIndex >= this.ActiveGame.Players.Count)
+                if (leaderIndex >= playerList.Count)
                 {
                     leaderIndex = 0;
                 }
-                var nextLeader = this.ActiveGame.Players.ElementAt(leaderIndex);
-                this.ActiveGame.Rounds.Last().Leader = nextLeader;
+                var nextLeader = playerList.ElementAt(leaderIndex);
+                lastRound.Leader = nextLeader;
             }
             _Db.SaveChanges();
         }
