@@ -185,6 +185,10 @@
     <Compile Include="Migrations\201410041549061_FriendlyGameId.Designer.cs">
       <DependentUpon>201410041549061_FriendlyGameId.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201410042153536_Ordering.cs" />
+    <Compile Include="Migrations\201410042153536_Ordering.Designer.cs">
+      <DependentUpon>201410042153536_Ordering.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationDbContext.cs" />
     <Compile Include="Models\Game.cs" />
@@ -265,6 +269,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201410041549061_FriendlyGameId.resx">
       <DependentUpon>201410041549061_FriendlyGameId.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201410042153536_Ordering.resx">
+      <DependentUpon>201410042153536_Ordering.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
