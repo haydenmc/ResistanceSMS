@@ -10,7 +10,7 @@ namespace ResistanceSMS.Helpers
 {
 	public class SMSParser
 	{
-		//Utils regex
+		//Utils regex and strings
 		public const String ANY_SUBSTRING_NAME	= "ANY";
 
 		public const String DELIMIT_PARAM_REGEX = "((?:[^a-zA-Z0-9]|\\s)+)";
@@ -74,11 +74,12 @@ namespace ResistanceSMS.Helpers
 					String[] paramList = Regex.Split(paramString, DELIMIT_PARAM_REGEX);
 					System.Diagnostics.Debug.WriteLine("Param String: " + paramString);
 					for (int y = 0; y < paramList.Length; y++)
-						System.Diagnostics.Debug.WriteLine("Params" + y + ": " + paramList[y]); return this.RegexArray[x].Item2(player, paramList);
+						System.Diagnostics.Debug.WriteLine("Params" + y + ": " + paramList[y]); 
+					return this.RegexArray[x].Item2(player, paramList);
 				}
 			}
-			System.Diagnostics.Debug.WriteLine("Missed all cases");
-			return false;
+
+			return this.InvalidCommand(player, input);
 		}
 
 		public Boolean ParseCreate(Player player, String[] input)
@@ -153,6 +154,12 @@ namespace ResistanceSMS.Helpers
 		public Boolean ParseNameChange(Player player, String[] input)
 		{
 			return false;
+		}
+
+		public Boolean InvalidCommand(Player player, String input)
+		{
+			System.Diagnostics.Debug.WriteLine("Missed all cases");
+			return true;
 		}
 	}
 }
