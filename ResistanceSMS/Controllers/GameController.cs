@@ -24,7 +24,10 @@ namespace ResistanceSMS.Controllers
         }
 		public GameController(Game game)
 		{
-            this.ActiveGame = this._Db.Games.Where(g => g.GameId == game.GameId).FirstOrDefault();
+			if (game != null)
+			{
+				this.ActiveGame = this._Db.Games.Where(g => g.GameId == game.GameId).FirstOrDefault();
+			}
 		}
 
 		public void CreateGame(Player creator)
@@ -139,7 +142,6 @@ namespace ResistanceSMS.Controllers
         
         public void AssignLeader()
         {
-            Random rnd = new Random();
             if (this.ActiveGame.Rounds.Last().Leader == null)
             {
                 this.ActiveGame.Rounds.Last().Leader = this.ActiveGame.Players.First();
@@ -157,5 +159,28 @@ namespace ResistanceSMS.Controllers
             }
             _Db.SaveChanges();
         }
+
+		/// <summary>
+		/// Sends a text message to the specified list of players.
+		/// </summary>
+		/// <param name="players">Enumerable of players to send to</param>
+		/// <param name="message">Message to send</param>
+		public void SMSPlayerList(IEnumerable<Player> players, string message)
+		{
+			foreach (var player in players)
+			{
+				SMSController.TwilioClient.Value.SendSmsMessage(ConfigurationManager.AppSettings["TwilioFromNumber"], player.PhoneNumber, message);
+			}
+		}
+
+		/// <summary>
+		/// Sends a message to a particular player
+		/// </summary>
+		/// <param name="player">The player to send to</param>
+		/// <param name="message">The message to send</param>
+		public void SMSPlayer(Player player, string message)
+		{
+			var twilioResult = SMSController.TwilioClient.Value.SendSmsMessage(ConfigurationManager.AppSettings["TwilioFromNumber"], player.PhoneNumber, message);
+		}
 	}
 }
