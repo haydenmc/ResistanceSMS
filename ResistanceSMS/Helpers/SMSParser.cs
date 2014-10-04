@@ -159,7 +159,7 @@ namespace ResistanceSMS.Helpers
 		public Boolean InvalidCommand(Player player, String input)
 		{
 			System.Diagnostics.Debug.WriteLine("Missed all cases");
-			return true;
+			return false;
 		}
 	}
 }
