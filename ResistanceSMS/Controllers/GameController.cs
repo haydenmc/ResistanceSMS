@@ -142,6 +142,9 @@ namespace ResistanceSMS.Controllers
                 this.ActiveGame.Players.ElementAt(i).TurnOrder = i;
             }
             _Db.SaveChanges();
+
+            SMSPlayerList(this.ActiveGame.ResistancePlayers, "You are a Resistance member!");
+            SMSPlayerList(this.ActiveGame.SpyPlayers, "You are a spy!");
         }
         
         public void AssignLeader()
@@ -165,6 +168,8 @@ namespace ResistanceSMS.Controllers
                 lastRound.Leader = nextLeader;
             }
             _Db.SaveChanges();
+            var message = this.ActiveGame.Rounds.OrderBy(r => r.RoundNumber).Last().Leader.Name +  "is the leader for this round.";
+            SMSPlayerList(this.ActiveGame.Players, message);
         }
         public void SelectMissionPlayers()
         {
