@@ -18,10 +18,19 @@ namespace ResistanceSMS.Controllers
 		{
 			using (var db = new ApplicationDbContext())
 			{
+				// Generate a random friendly ID
+				var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+				var random = new Random();
+				var friendlyId = new string(
+					Enumerable.Repeat(chars, 8)
+							  .Select(s => s[random.Next(s.Length)])
+							  .ToArray());
+
 				var player = db.Players.Where(p => p.PlayerId == creator.PlayerId).FirstOrDefault();
 				var game = new Game()
 				{
 					GameId = Guid.NewGuid(),
+					FriendlyId = friendlyId, // TODO: Make sure this doesn't collide
 					Creator = player,
 					Players = new List<Player>(),
 					ReadyPlayers = new List<Player>(),

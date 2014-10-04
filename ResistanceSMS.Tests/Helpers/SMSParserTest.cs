@@ -54,6 +54,7 @@ namespace ResistanceSMS.Tests.Helpers
 			var checkPlayer = db.Players.Where(x => x.PlayerId == player.PlayerId).First();
 			var checkGames = db.Games.Select(x => x).ToList();
 			Assert.IsNotNull(checkPlayer.CurrentGame, "'Create' command did not create game.");
+			Assert.IsTrue(checkPlayer.CurrentGame.FriendlyId.Length > 0, "Create didn't generate a friendly name.");
 		}
 	}
 }
