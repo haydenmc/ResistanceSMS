@@ -80,9 +80,9 @@ namespace ResistanceSMS.Controllers
                 {
                     // transition from Waiting to SelectMissionPlayers
                     // needs to join game, assign a random leader and assign teams
-                   // JoinGame();
-                   // AssignLeader();
-                  //  AssignTeams();
+                    JoinGame();
+                    AssignLeader();
+                    AssignTeams();
                 }
             }
             else if (ActiveGame.GameState == Game.GameStates.SelectMissionPlayers
@@ -90,7 +90,7 @@ namespace ResistanceSMS.Controllers
             {
                 // transition from SelectMissionPlayers to VoteMissionApprove
                 // assign the next player to be the leader
-              //  AssignLeader();
+                AssignLeader();
               //  SelectMissionPlayers();
             }
             else if (ActiveGame.GameState == Game.GameStates.VoteMissionApprove
