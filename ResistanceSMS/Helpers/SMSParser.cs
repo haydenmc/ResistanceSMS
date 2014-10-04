@@ -69,7 +69,7 @@ namespace ResistanceSMS.Helpers
 
 		public void ParseJoin(Player player, String input)
 		{
-
+            var gc = new GameController(player.CurrentGame);
 		}
 
 		public void ParseReady(Player player, String input)
