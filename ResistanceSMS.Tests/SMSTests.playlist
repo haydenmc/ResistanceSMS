@@ -1,0 +1,1 @@
+<Playlist Version="1.0"><Add Test="ResistanceSMS.Tests.Helpers.SMSControllerTest.TestSendToPlayerList" /><Add Test="ResistanceSMS.Tests.Helpers.SMSControllerTest.TestSendToPlayer" /></Playlist>
