@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ResistanceSMS.Filters;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -10,8 +11,10 @@ namespace ResistanceSMS.Controllers
 	public class SMSController : ApiController
 	{
 		// POST api/SMS
-		public void Post()
+		[BasicAuthenticator]
+		public string Post()
 		{
+			return "HEY!";
 		}
 	}
 }
