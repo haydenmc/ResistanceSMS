@@ -137,25 +137,36 @@ namespace ResistanceSMS.Controllers
 
         public void AssignTeams()
         {
-        
+            var numSpies = (int)Math.Round(Math.Sqrt(2 * (this.ActiveGame.Players.Count - 3)));
+
+            Random rnd = new Random();
+            this.ActiveGame.Players = this.ActiveGame.Players.OrderBy(x => rnd.Next()).ToList();
+            this.ActiveGame.SpyPlayers = this.ActiveGame.Players.Take(numSpies).ToList();
+            this.ActiveGame.ReadyPlayers = this.ActiveGame.Players.Skip(numSpies).ToList();
+            this.ActiveGame.Players = this.ActiveGame.Players.OrderBy(x => rnd.Next()).ToList();
+            
+            _Db.SaveChanges();
         }
         
         public void AssignLeader()
         {
+            var lastRound = this.ActiveGame.Rounds.OrderBy(r => r.RoundNumber).Last();
             if (this.ActiveGame.Rounds.Last().Leader == null)
             {
-                this.ActiveGame.Rounds.Last().Leader = this.ActiveGame.Players.First();
+                lastRound.Leader = this.ActiveGame.Players.OrderBy(p => p.TurnOrder).First();
             }
             else
             {
-                var lastLeader = this.ActiveGame.Rounds.Last().Leader;
-                var leaderIndex = this.ActiveGame.Players.ToList().IndexOf(lastLeader);
+                var lastLeader = lastRound.Leader;
+                var playerList = this.ActiveGame.Players.OrderBy(p => p.TurnOrder).ToList();
+                var leaderIndex = playerList.IndexOf(lastLeader);
                 leaderIndex++;
-                if (leaderIndex >= this.ActiveGame.Players.Count)
+                if (leaderIndex >= playerList.Count)
                 {
                     leaderIndex = 0;
                 }
-                var nextLeader = this.ActiveGame.Players.ToList()[leaderIndex];
+                var nextLeader = playerList.ElementAt(leaderIndex);
+                lastRound.Leader = nextLeader;
             }
             _Db.SaveChanges();
         }

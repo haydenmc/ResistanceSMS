@@ -38,7 +38,24 @@ namespace ResistanceSMS.Tests.Controllers
                 Players = new List<Player>()
                 {
                     new Player() {
-                        PlayerId = Guid.NewGuid()
+                        PlayerId = Guid.NewGuid(),
+                        TurnOrder = 0
+                    },
+                    new Player() {
+                        PlayerId = Guid.NewGuid(),
+                        TurnOrder = 1
+                    },
+                    new Player() {
+                        PlayerId = Guid.NewGuid(),
+                        TurnOrder = 2
+                    },
+                    new Player() {
+                        PlayerId = Guid.NewGuid(),
+                        TurnOrder = 3
+                    },
+                    new Player() {
+                        PlayerId = Guid.NewGuid(),
+                        TurnOrder = 4
                     }
                 },
                 Rounds = new List<Round>()
@@ -55,6 +72,8 @@ namespace ResistanceSMS.Tests.Controllers
             GameController gc = new GameController(g);
             gc.AssignLeader();
             Assert.IsTrue(gc.ActiveGame.Rounds.Last().Leader.PlayerId == g.Players.First().PlayerId, "First player wasn't selected as leader!");
+            gc.AssignLeader();
+            Assert.IsTrue(gc.ActiveGame.Rounds.Last().Leader.PlayerId == g.Players.ElementAt(1).PlayerId, "Second player wasn't selected as next leader!");
         }
     }
 }
