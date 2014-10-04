@@ -51,8 +51,9 @@ namespace ResistanceSMS.Tests.Helpers
 			parser.ParseStringInput(player,"Create");
 
 			// Check to make sure that the game was created.
-			var checkGame = db.Players.Where(x => x.PlayerId == player.PlayerId).First().CurrentGame;
-			Assert.IsNotNull(checkGame, "'Create' command did not create game.");
+			var checkPlayer = db.Players.Where(x => x.PlayerId == player.PlayerId).First();
+			var checkGames = db.Games.Select(x => x).ToList();
+			Assert.IsNotNull(checkPlayer.CurrentGame, "'Create' command did not create game.");
 		}
 	}
 }
