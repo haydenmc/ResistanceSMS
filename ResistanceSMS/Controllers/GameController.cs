@@ -137,7 +137,14 @@ namespace ResistanceSMS.Controllers
 
         public void AssignTeams()
         {
-        
+            var numSpies = (int)Math.Round(Math.Sqrt(2 * (this.ActiveGame.Players.Count - 3)));
+
+            Random rnd = new Random();
+            this.ActiveGame.Players = this.ActiveGame.Players.OrderBy(x => rnd.Next()).ToList();
+            this.ActiveGame.SpyPlayers = this.ActiveGame.Players.Take(numSpies).ToList();
+            this.ActiveGame.ReadyPlayers = this.ActiveGame.Players.Skip(numSpies).ToList();
+            this.ActiveGame.Players = this.ActiveGame.Players.OrderBy(x => rnd.Next()).ToList();
+            _Db.SaveChanges();
         }
         
         public void AssignLeader()
@@ -155,7 +162,8 @@ namespace ResistanceSMS.Controllers
                 {
                     leaderIndex = 0;
                 }
-                var nextLeader = this.ActiveGame.Players.ToList()[leaderIndex];
+                var nextLeader = this.ActiveGame.Players.ElementAt(leaderIndex);
+                this.ActiveGame.Rounds.Last().Leader = nextLeader;
             }
             _Db.SaveChanges();
         }
