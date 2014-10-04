@@ -93,15 +93,14 @@ namespace ResistanceSMS.Controllers
                 // transition from SelectMissionPlayers to VoteMissionApprove
                 // assign the next player to be the leader
                 AssignLeader();
-				//sends message to the leader to select players
-				SendSelectMissionPlayersMessage();
+              //  SelectMissionPlayers();
             }
             else if (ActiveGame.GameState == Game.GameStates.VoteMissionApprove
               && toState == Game.GameStates.VoteMissionPass)
             {
                 // transition from VoteMissionApprove to VoteMissionPass
-				this.SendVoteMessage();
-				/*using (var db = new ApplicationDbContext())
+              //  Vote();
+                /*using (var db = new ApplicationDbContext())
 			    {
                     var round = this.ActiveGame.Rounds.Last();
                     if (round.VoteMissionReject.Count == this.ActiveGame.Players.Count)
@@ -114,11 +113,12 @@ namespace ResistanceSMS.Controllers
                         // the 
                     }
                 }*/
+              //  CheckRejected();
             }
             else if (toState == Game.GameStates.GameEnd)
             {
                 if (ActiveGame.GameState == Game.GameStates.VoteMissionPass)
-				{
+			{
                     // transition from VoteMissionPass to GameEnd
 					this.SendPassOrFailMessage();
                 }
@@ -142,6 +142,9 @@ namespace ResistanceSMS.Controllers
                 this.ActiveGame.Players.ElementAt(i).TurnOrder = i;
             }
             _Db.SaveChanges();
+
+            SMSPlayerList(this.ActiveGame.ResistancePlayers, "You are a Resistance member!");
+            SMSPlayerList(this.ActiveGame.SpyPlayers, "You are a spy!");
         }
         
         public void AssignLeader()
@@ -165,6 +168,12 @@ namespace ResistanceSMS.Controllers
                 lastRound.Leader = nextLeader;
             }
             _Db.SaveChanges();
+            var message = this.ActiveGame.Rounds.OrderBy(r => r.RoundNumber).Last().Leader.Name +  "is the leader for this round.";
+            SMSPlayerList(this.ActiveGame.Players, message);
+        }
+        public void SelectMissionPlayers()
+        {
+
         }
 
 		public void CreateNewRound()
