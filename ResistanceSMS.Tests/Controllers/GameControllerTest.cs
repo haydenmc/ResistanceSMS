@@ -194,5 +194,55 @@ namespace ResistanceSMS.Tests.Controllers
             gc.AssignLeader();
             Assert.IsTrue(gc.ActiveGame.Rounds.Last().Leader.PlayerId == g.Players.ElementAt(1).PlayerId, "Second player wasn't selected as next leader!");
         }
+        [TestMethod]
+        public void SelectMissionPlayersTest() {
+            Game g = new Game()
+            {
+                CreateTime = DateTimeOffset.Now,
+                GameState = Game.GameStates.Waiting,
+                Players = new List<Player>()
+                {
+                    new Player() {
+                        PlayerId = Guid.NewGuid(),
+                        Name = "Lucas",
+                        TurnOrder = 0
+                    },
+                    new Player() {
+                        PlayerId = Guid.NewGuid(),
+                        Name = "Darren",
+                        TurnOrder = 1
+                    },
+                    new Player() {
+                        PlayerId = Guid.NewGuid(),
+                        Name = "Hayden",
+                        TurnOrder = 2
+                    },
+                    new Player() {
+                        PlayerId = Guid.NewGuid(),
+                        Name = "Corbin",
+                        TurnOrder = 3
+                    },
+                    new Player() {
+                        PlayerId = Guid.NewGuid(),
+                        Name = "Matt",
+                        TurnOrder = 4
+                    }
+                },
+                Rounds = new List<Round>()
+                {
+                    new Round() {
+                        RoundId = Guid.NewGuid()
+                    }
+                }
+            };
+            this.db.Games.Add(g);
+            this.db.SaveChanges();
+            GameController gc = new GameController(g);
+            gc.StateTransition(Game.GameStates.SelectMissionPlayers);
+            Player leader = gc.ActiveGame.RoundsOrdered.Last().Leader;
+            String[] missionPlayers = {"Hayden", "Lucas"};
+            gc.SelectMissionPlayers(leader, missionPlayers);
+            Assert.IsTrue(gc.ActiveGame.Rounds.Last().MissionPlayers.Count() == 2, "There is something wrong with selcting process!");
+        }
     }
 }

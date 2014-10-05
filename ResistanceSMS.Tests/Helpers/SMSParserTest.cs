@@ -1,5 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ResistanceSMS.Controllers;
 using ResistanceSMS.Models;
+using ResistanceSMS.Tests.Utils;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -34,7 +36,7 @@ namespace ResistanceSMS.Tests.Helpers
 		{
 			//Init variables
 			// Create a test player
-			var player = this.GeneratePlayer();
+			var player = TestUtils.GeneratePlayerWithGame(this.db);
 
 			//Test overall parser input
 			// Simulate 'create' command
@@ -61,7 +63,7 @@ namespace ResistanceSMS.Tests.Helpers
 		{
 			//Init variables
 			// Create a test player
-			var player = this.GeneratePlayer();
+			var player = TestUtils.GeneratePlayerWithGame(this.db);
 
 			//Test overall parser input
 			// Simulate 'create' command
@@ -84,7 +86,7 @@ namespace ResistanceSMS.Tests.Helpers
 		{
 			//Init variables
 			// Create a test player
-			var player = this.GeneratePlayer();
+			var player = TestUtils.GeneratePlayerWithGame(this.db);
 
 			//Test overall parser input
 			// Simulate 'create' command
@@ -121,11 +123,12 @@ namespace ResistanceSMS.Tests.Helpers
 
 			//Init variables
 			// Create a test player
-			var player = this.GeneratePlayer();
+			var player = TestUtils.GeneratePlayerWithGame(this.db);
 
 			//Test overall parser input
 			// Simulate 'create' command
 			var parser = new ResistanceSMS.Helpers.SMSParser();
+			//new GameController(player.CurrentGame).ActiveGame.Creator = player;
 
 			Assert.IsTrue(parser.ParseStringInput(player, "ready"), "Ready command should return true");
 		}
@@ -137,7 +140,7 @@ namespace ResistanceSMS.Tests.Helpers
 
 			//Init variables
 			// Create a test player
-			var player = this.GeneratePlayer();
+			var player = TestUtils.GeneratePlayerWithGame(this.db);
 
 			//Test overall parser input
 			// Simulate 'create' command
@@ -151,7 +154,7 @@ namespace ResistanceSMS.Tests.Helpers
 		{
 			//Init variables
 			// Create a test player
-			var player = this.GeneratePlayer();
+			var player = TestUtils.GeneratePlayerWithGame(this.db);
 
 			//Test overall parser input
 			// Simulate 'create' command
@@ -215,7 +218,7 @@ namespace ResistanceSMS.Tests.Helpers
 		{
 			//Init variables
 			// Create a test player
-			var player = this.GeneratePlayer();
+			var player = TestUtils.GeneratePlayerWithGame(this.db);
 
 			//Test overall parser input
 			// Simulate 'create' command
@@ -230,7 +233,7 @@ namespace ResistanceSMS.Tests.Helpers
 		{
 			//Init variables
 			// Create a test player
-			var player = this.GeneratePlayer();
+			var player = TestUtils.GeneratePlayerWithGame(this.db);
 
 			//Test overall parser input
 			// Simulate 'create' command
@@ -243,7 +246,30 @@ namespace ResistanceSMS.Tests.Helpers
 		[TestMethod]
 		public void StatsTest()
 		{
-			//TODO: implement
+			//Init variables
+			// Create a test player
+			var player = TestUtils.GeneratePlayerWithGame(this.db);
+
+			//Test overall parser input
+			// Simulate 'create' command
+			var parser = new ResistanceSMS.Helpers.SMSParser();
+
+			Assert.IsTrue(parser.ParseStringInput(player, "STATS"), "Stats command with no parameters should return true");
+			Assert.IsTrue(parser.ParseStringInput(player, "stats poop"), "Stats command with parameters should return true");
+			Assert.IsTrue(parser.ParseStringInput(player, "mystats"), "MyStarts command should return true");
+			Assert.IsTrue(parser.ParseStringInput(player, "mystats:Dfes3fasb"), "mystats command with parameters should return true");
+			
+			Boolean exceptionChecked = false;
+			try
+			{
+				parser.ParseStats(player, null);
+			}
+			catch (Exception e)
+			{
+				exceptionChecked = true;
+			}
+			Assert.IsTrue(exceptionChecked, "ParseStats not catching null input");
+
 		}
 
 		[TestMethod]
@@ -253,22 +279,6 @@ namespace ResistanceSMS.Tests.Helpers
 		}
 
 		//TODO: make it a random generator
-		public Player GeneratePlayer()
-		{
-			var player = new Player()
-			{
-				PlayerId = Guid.NewGuid(),
-				Name = "PMcGriddle",
-				PhoneNumber = null,
-				Wins = 0,
-				Losses = 0,
-				JoinTime = DateTimeOffset.Now,
-				LastActivityTime = DateTimeOffset.Now
-			};
-			db.Players.Add(player);
-			db.SaveChanges();
-
-			return player;
-		}
+		
 	}
 }
