@@ -154,14 +154,15 @@ namespace ResistanceSMS.Controllers
         
         public void AssignLeader()
         {
-            var lastRound = this.ActiveGame.Rounds.OrderBy(r => r.RoundNumber).Last();
-            if (this.ActiveGame.Rounds.Last().Leader == null)
+			var roundHistory = this.ActiveGame.RoundsOrdered.ToList();
+			var lastRound = roundHistory.Last();
+            if (roundHistory.Count == 1) // this is the first round
             {
                 lastRound.Leader = this.ActiveGame.Players.OrderBy(p => p.TurnOrder).First();
             }
             else
             {
-                var lastLeader = lastRound.Leader;
+                var lastLeader = roundHistory[roundHistory.Count-2].Leader;
                 var playerList = this.ActiveGame.Players.OrderBy(p => p.TurnOrder).ToList();
                 var leaderIndex = playerList.IndexOf(lastLeader);
                 leaderIndex++;
