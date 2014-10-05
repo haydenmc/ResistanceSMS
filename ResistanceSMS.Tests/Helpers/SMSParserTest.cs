@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ResistanceSMS.Controllers;
 using ResistanceSMS.Models;
 using System;
 using System.Collections.Generic;
@@ -34,7 +35,7 @@ namespace ResistanceSMS.Tests.Helpers
 		{
 			//Init variables
 			// Create a test player
-			var player = this.GeneratePlayer();
+			var player = this.GenerateGameShit();
 
 			//Test overall parser input
 			// Simulate 'create' command
@@ -61,7 +62,7 @@ namespace ResistanceSMS.Tests.Helpers
 		{
 			//Init variables
 			// Create a test player
-			var player = this.GeneratePlayer();
+			var player = this.GenerateGameShit();
 
 			//Test overall parser input
 			// Simulate 'create' command
@@ -82,19 +83,68 @@ namespace ResistanceSMS.Tests.Helpers
 		[TestMethod]
 		public void JoinTest()
 		{
+			//Init variables
+			// Create a test player
+			var player = this.GenerateGameShit();
 
+			//Test overall parser input
+			// Simulate 'create' command
+			var parser = new ResistanceSMS.Helpers.SMSParser();
+
+			//Checks empty params exception and empty first param
+			Boolean exceptionChecked = false;
+			try
+			{
+				parser.ParseStringInput(player, "Join");
+			}
+			catch (Exception e)
+			{
+				exceptionChecked = true;
+			}
+			Assert.IsTrue(exceptionChecked, "ParseJoin params cannot be empty");
+
+			exceptionChecked = false;
+			try
+			{
+				parser.ParseJoin(player, null);
+			}
+			catch (Exception e)
+			{
+				exceptionChecked = true;
+			}
+			Assert.IsTrue(exceptionChecked, "ParseJoin params cannot be null");
 		}
 
 		[TestMethod]
 		public void ReadyTest()
 		{
+			//should just work lol
 
+			//Init variables
+			// Create a test player
+			var player = this.GenerateGameShit();
+
+			//Test overall parser input
+			// Simulate 'create' command
+			var parser = new ResistanceSMS.Helpers.SMSParser();
+
+			Assert.IsTrue(parser.ParseStringInput(player, "ready"), "Ready command should return true");
 		}
 
 		[TestMethod]
 		public void PutTest()
 		{
+			//should just work lol
 
+			//Init variables
+			// Create a test player
+			var player = this.GenerateGameShit();
+
+			//Test overall parser input
+			// Simulate 'create' command
+			var parser = new ResistanceSMS.Helpers.SMSParser();
+
+			Assert.IsTrue(parser.ParseStringInput(player, "put bob, jim, joe, hoe"), "Put command should return true");
 		}
 
 		[TestMethod]
@@ -102,7 +152,7 @@ namespace ResistanceSMS.Tests.Helpers
 		{
 			//Init variables
 			// Create a test player
-			var player = this.GeneratePlayer();
+			var player = this.GenerateGameShit();
 
 			//Test overall parser input
 			// Simulate 'create' command
@@ -135,7 +185,7 @@ namespace ResistanceSMS.Tests.Helpers
 			{
 				exceptionChecked = true;
 			}
-			Assert.IsTrue(exceptionChecked, "Vote command needs a parameter");
+			Assert.IsTrue(exceptionChecked, "ParseVote not catching empty params");
 
 			exceptionChecked = false;
 			try
@@ -146,7 +196,7 @@ namespace ResistanceSMS.Tests.Helpers
 			{
 				exceptionChecked = true;
 			}
-			Assert.IsTrue(exceptionChecked, "Vote params cannot be null");
+			Assert.IsTrue(exceptionChecked, "ParseVote not catching null input");
 
 			//Checks invalid params exception
 			exceptionChecked = false;
@@ -162,32 +212,107 @@ namespace ResistanceSMS.Tests.Helpers
 		}
 
 		[TestMethod]
+		public void PassTest()
+		{
+			//Init variables
+			// Create a test player
+			var player = this.GenerateGameShit();
+
+			//Test overall parser input
+			// Simulate 'create' command
+			var parser = new ResistanceSMS.Helpers.SMSParser();
+
+			Assert.IsTrue(parser.ParseStringInput(player, "PaSS:::fsdfsgGDFGrd"), "Pass command should return true");
+		
+		}
+
+		[TestMethod]
+		public void FailTest()
+		{
+			//Init variables
+			// Create a test player
+			var player = this.GenerateGameShit();
+
+			//Test overall parser input
+			// Simulate 'create' command
+			var parser = new ResistanceSMS.Helpers.SMSParser();
+
+			Assert.IsTrue(parser.ParseStringInput(player, "FAIL sdfsdfegsdf"), "Fail command should return true");
+		
+		}
+
+		[TestMethod]
 		public void StatsTest()
 		{
-
+			//TODO: implement
 		}
 
 		[TestMethod]
 		public void HelpTest()
 		{
-
+			//TODO: implement
 		}
 
 		//TODO: make it a random generator
-		public Player GeneratePlayer()
+		public Player GenerateGameShit()
 		{
 			var player = new Player()
 			{
 				PlayerId = Guid.NewGuid(),
 				Name = "PMcGriddle",
-				PhoneNumber = "+12242120088",
+				PhoneNumber = null,
 				Wins = 0,
 				Losses = 0,
+				TurnOrder = 5,
 				JoinTime = DateTimeOffset.Now,
 				LastActivityTime = DateTimeOffset.Now
 			};
-			db.Players.Add(player);
-			db.SaveChanges();
+
+			Game g = new Game()
+			{
+
+				CreateTime = DateTimeOffset.Now,
+				GameState = Game.GameStates.Waiting,
+				Players = new List<Player>()
+                {
+                    new Player() {
+                        PlayerId = Guid.NewGuid(),
+                        TurnOrder = 0
+                    },
+                    new Player() {
+                        PlayerId = Guid.NewGuid(),
+                        TurnOrder = 1
+                    },
+                    new Player() {
+                        PlayerId = Guid.NewGuid(),
+                        TurnOrder = 2
+                    },
+                    new Player() {
+                        PlayerId = Guid.NewGuid(),
+                        TurnOrder = 3
+                    },
+                    new Player() {
+                        PlayerId = Guid.NewGuid(),
+                        TurnOrder = 4
+                    },
+					player
+                },
+				Rounds = new List<Round>()
+                {
+                    new Round() {
+                        RoundId = Guid.NewGuid()
+                    }
+                }
+			};
+			this.db.Games.Add(g);
+
+			this.db.SaveChanges();
+
+			GameController gc = new GameController(g);
+			gc.ActiveGame.Creator = player;
+			player.CurrentGame = g;
+
+			this.db.SaveChanges();
 
 			return player;
 		}

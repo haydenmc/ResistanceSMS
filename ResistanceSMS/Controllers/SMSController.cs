@@ -24,7 +24,7 @@ namespace ResistanceSMS.Controllers
 
 		// POST api/SMS
 		[BasicAuthenticator]
-		public IHttpActionResult Post(TwilioRequest twilioRequest)
+		public HttpResponseMessage Post(TwilioRequest twilioRequest)
 		{
 			using (var db = new ApplicationDbContext())
 			{
@@ -39,27 +39,27 @@ namespace ResistanceSMS.Controllers
 						JoinTime = DateTimeOffset.Now,
 						Losses = 0,
 						Wins = 0,
-						Name = "Player" + rnd.Next(1, 100),
+						Name = "Operative" + rnd.Next(1, 100),
 						LastActivityTime = DateTimeOffset.Now
 					};
 					db.Players.Add(player);
 					db.SaveChanges();
 				}
 				Parser.ParseStringInput(player, twilioRequest.Body);
-
-				//var response = new Twilio.TwiML.TwilioResponse();
-				//response.Message("SOUNDS GOOD, " + player.Name);
-				//// Force XML response... Twilio doesn't specify an Accept header.
-				//return ResponseMessage(new HttpResponseMessage(HttpStatusCode.OK)
-				//{
-				//	Content = new ObjectContent<XElement>(response.Element,
-				//	   new System.Net.Http.Formatting.XmlMediaTypeFormatter
-				//	   {
-				//		   UseXmlSerializer = true
-				//	   })
-				//});
-				return ResponseMessage(new HttpResponseMessage(HttpStatusCode.OK));
+				return Request.CreateResponse(HttpStatusCode.OK);
 			}
+		}
+
+		[BasicAuthenticator]
+		public HttpResponseMessage Delete()
+		{
+			using (var db = new ApplicationDbContext())
+			{
+				db.Players.RemoveRange(db.Players);
+				db.Rounds.RemoveRange(db.Rounds);
+				db.Games.RemoveRange(db.Games);
+			}
+			return Request.CreateResponse(HttpStatusCode.OK);
 		}
 	}
 }

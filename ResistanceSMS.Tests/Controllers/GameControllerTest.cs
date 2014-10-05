@@ -74,7 +74,6 @@ namespace ResistanceSMS.Tests.Controllers
             Assert.IsTrue(gc.ActiveGame.SpyPlayers.Count == 2);
             Assert.IsTrue(gc.ActiveGame.ResistancePlayers.Count == 3);
             Assert.IsTrue(gc.ActiveGame.Players.Count == 5);
-            
             var playerList = gc.ActiveGame.Players.OrderBy(p => p.TurnOrder).ToList();
             for (int i=0;i<playerList.Count;i++) {
                 var player = playerList[i];
