@@ -24,7 +24,7 @@ namespace ResistanceSMS.Controllers
 
 		// POST api/SMS
 		[BasicAuthenticator]
-		public HttpResponseMessage Post(TwilioRequest twilioRequest)
+		public IHttpActionResult Post(TwilioRequest twilioRequest)
 		{
 			using (var db = new ApplicationDbContext())
 			{
@@ -53,7 +53,15 @@ namespace ResistanceSMS.Controllers
 				{
 					new GameController(null).SMSPlayer(player, "💣 PARSE ERROR: " + e.Message);
 				}
-				return Request.CreateResponse<string>(HttpStatusCode.OK,"");
+				//return Request.CreateResponse<string>(HttpStatusCode.OK,"");
+				return ResponseMessage(new HttpResponseMessage(HttpStatusCode.OK)
+				{
+					Content = new ObjectContent<XElement>(new XElement("response"),
+					   new System.Net.Http.Formatting.XmlMediaTypeFormatter
+					   {
+						   UseXmlSerializer = true
+					   })
+				});
 			}
 		}
 

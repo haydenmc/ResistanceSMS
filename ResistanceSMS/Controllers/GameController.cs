@@ -344,8 +344,15 @@ namespace ResistanceSMS.Controllers
 			_Db.SaveChanges();
 			if (round.VoteMissionReject.Count + round.VoteMissionApprove.Count == this.ActiveGame.Players.Count)
 			{
-				var approvePlayers = round.VoteMissionApprove.Select(x => x.Name).Aggregate((current, next) => current + ", " + next);
-				var rejectPlayers = round.VoteMissionReject.Select(x => x.Name).Aggregate((current, next) => current + ", " + next);
+				String approvePlayers = "", rejectPlayers = "";
+				if (round.VoteMissionApprove.Count > 0)
+				{
+					approvePlayers = round.VoteMissionApprove.Select(x => x.Name).Aggregate((current, next) => current + ", " + next);
+				}
+				if (round.VoteMissionReject.Count > 0)
+				{
+					rejectPlayers = round.VoteMissionReject.Select(x => x.Name).Aggregate((current, next) => current + ", " + next);
+				}
 				if (round.VoteMissionApprove.Count >= round.VoteMissionReject.Count)
 				{
 					// TODO: Reveal players' votes.
