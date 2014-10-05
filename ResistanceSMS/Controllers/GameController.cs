@@ -79,7 +79,7 @@ namespace ResistanceSMS.Controllers
 			var matchingGame = _Db.Games.Where(g => g.FriendlyId == friendlyGameId.ToUpper()).FirstOrDefault();
 			if (matchingGame == null)
 			{
-				SMSPlayer(player, "💩 Couldn't find your game! Check your ID and try again.");
+                SMSPlayer(player, "⚠ Couldn't find your game! Check your ID and try again.");
 				return;
 			}
 			var dbPlayer = _Db.Players.Where(p => p.PlayerId == player.PlayerId).FirstOrDefault();
@@ -235,21 +235,21 @@ namespace ResistanceSMS.Controllers
 			if (!this.ActiveGame.GameState.Equals(Game.GameStates.SelectMissionPlayers))
 			{
 				//  the game state does not match
-				var message = "💢 Invalid command at this time.";
+                var message = "⚠ Invalid command at this time.";
 				SMSPlayer(player, message);
 				return;
 			}
 			if (!player.PlayerId.Equals(this.ActiveGame.Rounds.OrderBy(r => r.RoundNumber).Last().Leader.PlayerId))
 			{
 				//  the player who sent the message does not match
-				var message = "💢 You are not the leader!";
+                var message = "⚠ You are not the leader!";
 				SMSPlayer(player, message);
 				return;
 			}
             if (players.Count() != numberOfMissionPlayers) 
             {
                 // the number of mission players does not match
-				var message = "💢 The number of mission players in this round has to be " 
+                var message = "⚠ The number of mission players in this round has to be " 
                     + numberOfMissionPlayers + ".";
                 SMSPlayer(player, message);
 				return;
@@ -262,7 +262,7 @@ namespace ResistanceSMS.Controllers
                 if (playerCand == null) 
                 {
                     //  the candidate does not exist
-					var message = "💢 The name '" + candidate + "' doesn't exist.";
+                    var message = "⚠ The name '" + candidate + "' doesn't exist.";
                     SMSPlayer(player, message);
 					return;
                 }
@@ -420,7 +420,7 @@ namespace ResistanceSMS.Controllers
 		/// <param name="command"></param>
 		public void InvalidCommand(Player player, String command)
 		{
-			this.SMSPlayer(player, "💢 This is an invalid command: " + command);
+            this.SMSPlayer(player, "⚠ This is an invalid command: " + command);
 		}
 
 		/// <summary>

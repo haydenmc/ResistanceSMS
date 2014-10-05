@@ -32,8 +32,6 @@ namespace ResistanceSMS.Helpers
 		public const String MY_STATS_REGEX		= "\\A(?i)mystats"	+ ANY_REGEX;
 		public const String HELP_REGEX			= "\\A(?i)help"		+ ANY_REGEX;
 		public const String NAME_CHANGE_REGEX	= "\\A(?i)name"		+ ANY_REGEX;
-
-
 		//Delegates
 		public delegate Boolean ParseAction(Player player, String[] input);
 
@@ -290,6 +288,8 @@ namespace ResistanceSMS.Helpers
 		public Boolean ParseHelp(Player player, String[] input)
 		{
 			//TODO: add parameter and call GameController function
+            var message = "You can say CREATE, JOIN, NAME, STATS, MYSTATS!";
+            new GameController(player.CurrentGame).SMSPlayer(player, message);
 			return true;
 		}
 
