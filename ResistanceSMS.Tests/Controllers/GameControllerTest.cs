@@ -75,6 +75,9 @@ namespace ResistanceSMS.Tests.Controllers
             //initialize things
             GameController gc = new GameController(g);
             var p = gc.ActiveGame.Players.Last();
+			gc.ActiveGame.RoundsOrdered.Last().MissionPlayers.Add(p);
+			gc.ActiveGame.RoundsOrdered.Last().MissionPlayers.Add(gc.ActiveGame.Players.First());
+			gc.ActiveGame.GameState = Game.GameStates.VoteMissionPass;
             var voteF = gc.ActiveGame.RoundsOrdered.Last().VoteMissionFail;
             var voteP = gc.ActiveGame.RoundsOrdered.Last().VoteMissionPass;
             //test lists empty
@@ -209,9 +212,10 @@ namespace ResistanceSMS.Tests.Controllers
 
             GameController gc = new GameController(g);
             gc.AssignLeader();
-            Assert.IsTrue(gc.ActiveGame.Rounds.Last().Leader.PlayerId == g.Players.First().PlayerId, "First player wasn't selected as leader!");
+            Assert.IsTrue(gc.ActiveGame.Rounds.Last().Leader.PlayerId == gc.ActiveGame.Players.OrderBy(p => p.TurnOrder).First().PlayerId, "First player wasn't selected as leader!");
+			gc.CreateNewRound();
             gc.AssignLeader();
-            Assert.IsTrue(gc.ActiveGame.Rounds.Last().Leader.PlayerId == g.Players.ElementAt(1).PlayerId, "Second player wasn't selected as next leader!");
+            Assert.IsTrue(gc.ActiveGame.Rounds.Last().Leader.PlayerId == gc.ActiveGame.Players.OrderBy(p => p.TurnOrder).ElementAt(1).PlayerId, "Second player wasn't selected as next leader!");
         }
         [TestMethod]
         public void SelectMissionPlayersTest() {

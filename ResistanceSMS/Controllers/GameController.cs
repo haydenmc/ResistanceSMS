@@ -121,12 +121,29 @@ namespace ResistanceSMS.Controllers
 			}
 			else if (toState == Game.GameStates.GameEnd)
 			{
-				if (ActiveGame.GameState == Game.GameStates.VoteMissionPass)
+				if (ActiveGame.GameState == Game.GameStates.VoteMissionApprove)
 				{
-					// transition from VoteMissionPass to GameEnd
-					this.SendPassOrFailMessage();
+					// Spies win by default
+					SMSPlayerList(ActiveGame.Players, "GAME OVER! Spies win due to 5 vote failures!");
 				}
-				this.SendStatsMessage();
+				else
+				{
+					var message = "GAME OVER! ";
+					if (this.ActiveGame.ResistanceScore > this.ActiveGame.SpyScore)
+					{
+						message += "RESISTANCE wins! ";
+					}
+					else if (this.ActiveGame.ResistanceScore < this.ActiveGame.SpyScore)
+					{
+						message += "SPIES win! ";
+					}
+					else
+					{
+						message += "Somehow you managed to tie! This is broken. ";
+					}
+					message += "R: " + this.ActiveGame.ResistanceScore + ", S: " + this.ActiveGame.SpyScore + ". ";
+					SMSPlayerList(ActiveGame.Players, message);
+				}
 			}
 			ActiveGame.GameState = toState;
 			_Db.SaveChanges();
@@ -327,15 +344,17 @@ namespace ResistanceSMS.Controllers
 			_Db.SaveChanges();
 			if (round.VoteMissionReject.Count + round.VoteMissionApprove.Count == this.ActiveGame.Players.Count)
 			{
+				var approvePlayers = round.VoteMissionApprove.Select(x => x.Name).Aggregate((current, next) => current + ", " + next);
+				var rejectPlayers = round.VoteMissionReject.Select(x => x.Name).Aggregate((current, next) => current + ", " + next);
 				if (round.VoteMissionApprove.Count >= round.VoteMissionReject.Count)
 				{
 					// TODO: Reveal players' votes.
-					SMSPlayerList(this.ActiveGame.Players, "👍 Mission approved. Standby for mission status...");
+					SMSPlayerList(this.ActiveGame.Players, "👍 Mission approved. ✔: " + approvePlayers + ". ✖: " + rejectPlayers);
 					StateTransition(Game.GameStates.VoteMissionPass);
 				}
 				else
 				{
-					SMSPlayerList(this.ActiveGame.Players, "👎 Mission rejected. The Resistance is suspicious...");
+					SMSPlayerList(this.ActiveGame.Players, "👎 Mission rejected. ✔: " + approvePlayers + ". ✖: " + rejectPlayers);
 					round.NumRejections++;
 					round.VoteMissionApprove.Clear();
 					round.VoteMissionReject.Clear();
@@ -395,7 +414,15 @@ namespace ResistanceSMS.Controllers
 					SMSPlayerList(this.ActiveGame.Players, "😎 Mission PASSED w/ " + round.VoteMissionPass.Count + " passes, " + round.VoteMissionFail.Count + " fails.");
 					this.ActiveGame.ResistanceScore++;
 				}
-				StateTransition(Game.GameStates.SelectMissionPlayers);
+				if (this.ActiveGame.SpyScore >= 3 || this.ActiveGame.ResistanceScore >= 3)
+				{
+					StateTransition(Game.GameStates.GameEnd);
+				}
+				else
+				{
+					SendStatsMessage();
+					StateTransition(Game.GameStates.SelectMissionPlayers);
+				}
 			}
 		}
 
@@ -404,7 +431,20 @@ namespace ResistanceSMS.Controllers
 		/// </summary>
 		public void SendStatsMessage()
 		{
-            var message = "";
+			var message = "";
+			if (this.ActiveGame.ResistanceScore > this.ActiveGame.SpyScore)
+			{
+				message += "RESISTANCE are winning! ";
+			}
+			else if (this.ActiveGame.ResistanceScore < this.ActiveGame.SpyScore)
+			{
+				message += "SPIES are winning! ";
+			}
+			else
+			{
+				message += "The game is currently TIED! ";
+			}
+            message += "R: " + this.ActiveGame.ResistanceScore + ", S: " + this.ActiveGame.SpyScore + ". " + (5 - this.ActiveGame.Rounds.Count) + " rounds remain.";
             this.SMSPlayerList(this.ActiveGame.Players, message);
 		}
 
