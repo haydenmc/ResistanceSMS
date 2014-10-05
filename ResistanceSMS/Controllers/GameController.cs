@@ -298,8 +298,9 @@ namespace ResistanceSMS.Controllers
 		/// </summary>
 		/// <param name="player"></param>
 		/// <param name="vote"></param>
-		public void PlayerVote(Player player, Boolean vote)
+		public void PlayerVote(Player playerRef, Boolean vote)
 		{
+			var player = _Db.Players.Where(p => p.PlayerId == playerRef.PlayerId).FirstOrDefault();
 			var round = this.ActiveGame.RoundsOrdered.Last();
 			round.VoteMissionApprove.Remove(player);
 			round.VoteMissionReject.Remove(player);
