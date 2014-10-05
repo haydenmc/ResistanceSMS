@@ -11,7 +11,7 @@ namespace ResistanceSMS.Models
 		public virtual Game Game { get; set; }
 		public int RoundNumber { get; set; }
 		public virtual Player Leader { get; set; }
-		public int NumFailures { get; set; }
+		public int NumRejections { get; set; }
 		public virtual ICollection<Player> MissionPlayers { get; set; }
 		public virtual ICollection<Player> VoteMissionApprove { get; set; }
 		public virtual ICollection<Player> VoteMissionReject { get; set; }
