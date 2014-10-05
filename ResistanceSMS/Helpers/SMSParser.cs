@@ -153,7 +153,7 @@ namespace ResistanceSMS.Helpers
 		/// <returns></returns>
 		public Boolean ParsePut(Player player, String[] input)
 		{
-			//TODO: send list of players to GameController function
+			new GameController(player.CurrentGame).SelectMissionPlayers(player, input);
 			return true;
 		}
 
