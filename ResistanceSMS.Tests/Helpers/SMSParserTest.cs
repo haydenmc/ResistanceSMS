@@ -82,19 +82,68 @@ namespace ResistanceSMS.Tests.Helpers
 		[TestMethod]
 		public void JoinTest()
 		{
+			//Init variables
+			// Create a test player
+			var player = this.GeneratePlayer();
 
+			//Test overall parser input
+			// Simulate 'create' command
+			var parser = new ResistanceSMS.Helpers.SMSParser();
+
+			//Checks empty params exception and empty first param
+			Boolean exceptionChecked = false;
+			try
+			{
+				parser.ParseStringInput(player, "Join");
+			}
+			catch (Exception e)
+			{
+				exceptionChecked = true;
+			}
+			Assert.IsTrue(exceptionChecked, "ParseJoin params cannot be empty");
+
+			exceptionChecked = false;
+			try
+			{
+				parser.ParseJoin(player, null);
+			}
+			catch (Exception e)
+			{
+				exceptionChecked = true;
+			}
+			Assert.IsTrue(exceptionChecked, "ParseJoin params cannot be null");
 		}
 
 		[TestMethod]
 		public void ReadyTest()
 		{
+			//should just work lol
 
+			//Init variables
+			// Create a test player
+			var player = this.GeneratePlayer();
+
+			//Test overall parser input
+			// Simulate 'create' command
+			var parser = new ResistanceSMS.Helpers.SMSParser();
+
+			Assert.IsTrue(parser.ParseStringInput(player, "ready"), "Ready command should return true");
 		}
 
 		[TestMethod]
 		public void PutTest()
 		{
+			//should just work lol
 
+			//Init variables
+			// Create a test player
+			var player = this.GeneratePlayer();
+
+			//Test overall parser input
+			// Simulate 'create' command
+			var parser = new ResistanceSMS.Helpers.SMSParser();
+
+			Assert.IsTrue(parser.ParseStringInput(player, "put bob, jim, joe, hoe"), "Put command should return true");
 		}
 
 		[TestMethod]
@@ -135,7 +184,7 @@ namespace ResistanceSMS.Tests.Helpers
 			{
 				exceptionChecked = true;
 			}
-			Assert.IsTrue(exceptionChecked, "Vote command needs a parameter");
+			Assert.IsTrue(exceptionChecked, "ParseVote not catching empty params");
 
 			exceptionChecked = false;
 			try
@@ -146,7 +195,7 @@ namespace ResistanceSMS.Tests.Helpers
 			{
 				exceptionChecked = true;
 			}
-			Assert.IsTrue(exceptionChecked, "Vote params cannot be null");
+			Assert.IsTrue(exceptionChecked, "ParseVote not catching null input");
 
 			//Checks invalid params exception
 			exceptionChecked = false;
@@ -162,15 +211,45 @@ namespace ResistanceSMS.Tests.Helpers
 		}
 
 		[TestMethod]
+		public void PassTest()
+		{
+			//Init variables
+			// Create a test player
+			var player = this.GeneratePlayer();
+
+			//Test overall parser input
+			// Simulate 'create' command
+			var parser = new ResistanceSMS.Helpers.SMSParser();
+
+			Assert.IsTrue(parser.ParseStringInput(player, "PaSS:::fsdfsgGDFGrd"), "Pass command should return true");
+		
+		}
+
+		[TestMethod]
+		public void FailTest()
+		{
+			//Init variables
+			// Create a test player
+			var player = this.GeneratePlayer();
+
+			//Test overall parser input
+			// Simulate 'create' command
+			var parser = new ResistanceSMS.Helpers.SMSParser();
+
+			Assert.IsTrue(parser.ParseStringInput(player, "FAIL sdfsdfegsdf"), "Fail command should return true");
+		
+		}
+
+		[TestMethod]
 		public void StatsTest()
 		{
-
+			//TODO: implement
 		}
 
 		[TestMethod]
 		public void HelpTest()
 		{
-
+			//TODO: implement
 		}
 
 		//TODO: make it a random generator

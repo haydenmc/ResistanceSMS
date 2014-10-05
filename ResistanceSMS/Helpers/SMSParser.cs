@@ -120,7 +120,7 @@ namespace ResistanceSMS.Helpers
 		public Boolean ParseJoin(Player player, String[] input)
 		{
 			//check if there are params
-			if (input.Length <= 0)
+			if (input == null || input[0].Equals(""))
 			{
 				throw new Exception("Exception at ParseJoin, params cannot be empty");
 			}
@@ -153,7 +153,7 @@ namespace ResistanceSMS.Helpers
 		/// <returns></returns>
 		public Boolean ParsePut(Player player, String[] input)
 		{
-			//TODO: send list of players to GameController function
+			new GameController(player.CurrentGame).SelectMissionPlayers(player, input);
 			return true;
 		}
 
