@@ -189,8 +189,8 @@ namespace ResistanceSMS.Controllers
 		/// <param name="ready"></param>
 		public void PlayerIsReady(Player player, Boolean ready)
 		{
-			//NOTE: don't have to handle no ready yet since there is no way for
-			//		the player to be change from ready to not ready
+			//NOTE: don't have to handle not ready yet since there is no way for
+			//		the player to change from ready to not ready
 		}
 		
 		/// <summary>
@@ -223,7 +223,7 @@ namespace ResistanceSMS.Controllers
 
 		/// <summary>
 		/// Is called by the parser to inform the game that a player has voted
-		/// for the people going on the mission
+		/// for the players going on the mission
 		/// </summary>
 		/// <param name="player"></param>
 		/// <param name="vote"></param>
