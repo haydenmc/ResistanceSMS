@@ -47,24 +47,24 @@ namespace ResistanceSMS.Controllers
 							.ToArray());
 
 			var player = _Db.Players.Where(p => p.PlayerId == creator.PlayerId).FirstOrDefault();
-			var game = new Game()
-			{
-				GameId = Guid.NewGuid(),
+				var game = new Game()
+				{
+					GameId = Guid.NewGuid(),
 				FriendlyId = friendlyId, // TODO: Make sure this doesn't collide
-				Creator = player,
+					Creator = player,
 				Players = new List<Player>() { player },
-				ReadyPlayers = new List<Player>(),
-				ResistancePlayers = new List<Player>(),
-				SpyPlayers = new List<Player>(),
-				Rounds = new List<Round>(),
-				ResistanceScore = 0,
-				SpyScore = 0,
-				GameState = Game.GameStates.Waiting,
-				CreateTime = DateTimeOffset.Now,
-				LastActivityTime = DateTimeOffset.Now
-			};
+					ReadyPlayers = new List<Player>(),
+					ResistancePlayers = new List<Player>(),
+					SpyPlayers = new List<Player>(),
+					Rounds = new List<Round>(),
+					ResistanceScore = 0,
+					SpyScore = 0,
+					GameState = Game.GameStates.Waiting,
+					CreateTime = DateTimeOffset.Now,
+					LastActivityTime = DateTimeOffset.Now
+				};
 			_Db.Games.Add(game);
-			player.CurrentGame = game;
+				player.CurrentGame = game;
 			_Db.SaveChanges();
 
 			SMSPlayer(player, "🎉 You've created a game! Tell others to text 'Join " + game.FriendlyId + "'.");
@@ -198,7 +198,7 @@ namespace ResistanceSMS.Controllers
 			//NOTE: don't have to handle no ready yet since there is no way for
 			//		the player to be change from ready to not ready
 		}
-
+		
 		/// <summary>
 		/// Is called by the parser to set the mission players and increment state
 		/// </summary>
@@ -209,7 +209,7 @@ namespace ResistanceSMS.Controllers
             var lastRound = this.ActiveGame.Rounds.OrderBy(r => r.RoundNumber).Last();
             var roundNumber = lastRound.RoundNumber;
             var playerNumber = this.ActiveGame.Players.Count;
-            int numberOfMissionPlayers = missionPlayerNumber[roundNumber-1, playerNumber-5];
+            int numberOfMissionPlayers = missionPlayerNumber[roundNumber, playerNumber-5];
             if (players.Count() != numberOfMissionPlayers) 
             {
                 // the number of mission players does not match
