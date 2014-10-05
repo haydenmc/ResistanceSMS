@@ -47,27 +47,27 @@ namespace ResistanceSMS.Controllers
 							.ToArray());
 
 			var player = _Db.Players.Where(p => p.PlayerId == creator.PlayerId).FirstOrDefault();
-				var game = new Game()
-				{
-					GameId = Guid.NewGuid(),
+			var game = new Game()
+			{
+				GameId = Guid.NewGuid(),
 				FriendlyId = friendlyId, // TODO: Make sure this doesn't collide
-					Creator = player,
-					Players = new List<Player>(),
-					ReadyPlayers = new List<Player>(),
-					ResistancePlayers = new List<Player>(),
-					SpyPlayers = new List<Player>(),
-					Rounds = new List<Round>(),
-					ResistanceScore = 0,
-					SpyScore = 0,
-					GameState = Game.GameStates.Waiting,
-					CreateTime = DateTimeOffset.Now,
-					LastActivityTime = DateTimeOffset.Now
-				};
+				Creator = player,
+				Players = new List<Player>() { player },
+				ReadyPlayers = new List<Player>(),
+				ResistancePlayers = new List<Player>(),
+				SpyPlayers = new List<Player>(),
+				Rounds = new List<Round>(),
+				ResistanceScore = 0,
+				SpyScore = 0,
+				GameState = Game.GameStates.Waiting,
+				CreateTime = DateTimeOffset.Now,
+				LastActivityTime = DateTimeOffset.Now
+			};
 			_Db.Games.Add(game);
-				player.CurrentGame = game;
+			player.CurrentGame = game;
 			_Db.SaveChanges();
 
-			SMSPlayer(player, "🎉 You have successfully created a game! Tell others to text 'Join " + game.FriendlyId + "'.");
+			SMSPlayer(player, "🎉 You've created a game! Tell others to text 'Join " + game.FriendlyId + "'.");
 		}
 
 		public void JoinGame(Player player, String friendlyGameId)
@@ -75,7 +75,7 @@ namespace ResistanceSMS.Controllers
 			var matchingGame = _Db.Games.Where(g => g.FriendlyId == friendlyGameId.ToUpper()).FirstOrDefault();
 			if (matchingGame == null)
 			{
-				SMSPlayer(player, "We could not find your game! Check your ID and try again.");
+				SMSPlayer(player, "💩 Couldn't find your game! Check your ID and try again.");
 				return;
 			}
 			var dbPlayer = _Db.Players.Where(p => p.PlayerId == player.PlayerId).FirstOrDefault();
@@ -105,7 +105,6 @@ namespace ResistanceSMS.Controllers
                 // transition from SelectMissionPlayers to VoteMissionApprove
                 // assign the next player to be the leader
                 AssignLeader();
-                SendSelectMissionPlayersMessage();
             }
             else if (ActiveGame.GameState == Game.GameStates.VoteMissionApprove
               && toState == Game.GameStates.VoteMissionPass)
@@ -170,7 +169,8 @@ namespace ResistanceSMS.Controllers
 			var leaderPlayer = lastRound.Leader;
             var message = leaderPlayer.Name +  " is the mission leader for this round.";
             SMSPlayerList(this.ActiveGame.Players, message);
-			SMSPlayer(leaderPlayer, "Select players to put on the mission by texting 'Put [playername]'.");
+			message = "🌟 Select mission players by texting 'Put [name], [name], etc.'";
+			SMSPlayer(leaderPlayer, message);
         }
 
 		public void CreateNewRound()
@@ -193,19 +193,10 @@ namespace ResistanceSMS.Controllers
 			}
 			else
 			{
-				SMSPlayer(player, "You are not the game creator, and cannot start the game!");
+				SMSPlayer(player, "💩 You are not the game creator, and cannot start the game!");
 			}
 			//NOTE: don't have to handle no ready yet since there is no way for
 			//		the player to be change from ready to not ready
-		}
-		
-		/// <summary>
-		/// Sends a text message to the leader to select the mission players
-		/// </summary>
-		public void SendSelectMissionPlayersMessage()
-		{
-            var message="Hey leader! Please select mission players!"; 
-            SMSPlayer(this.ActiveGame.Rounds.OrderBy(r => r.RoundNumber).Last().Leader, message);
 		}
 
 		/// <summary>
@@ -222,20 +213,20 @@ namespace ResistanceSMS.Controllers
             if (players.Count() != numberOfMissionPlayers) 
             {
                 // the number of mission players does not match
-                var message = "The number of mission players in this round has to be " 
+				var message = "💢 The number of mission players in this round has to be " 
                     + numberOfMissionPlayers + ".";
                 SMSPlayer(player, message);
             }
             else if (!player.Equals(this.ActiveGame.Rounds.OrderBy(r => r.RoundNumber).Last().Leader))
             {
                 //  the player who sent the message does not match
-                var message = "You are not the leader! SMS is expensive!";
+				var message = "💢 You are not the leader! SMS is expensive!";
                 SMSPlayer(player, message);
             }
             else if (!this.ActiveGame.GameState.Equals(Game.GameStates.SelectMissionPlayers)) 
             {
                 //  the game state does not match
-                var message = "You did not send this message at the right time man.";
+				var message = "💢 Invalid command at this time.";
                 SMSPlayer(player, message);
             }
             for (int i = 0; i < numberOfMissionPlayers; i++ )
@@ -245,7 +236,7 @@ namespace ResistanceSMS.Controllers
                 if (check == -1) 
                 {
                     //  the candidate does not exist
-                    var message = "The name you typed in doesn't exist.";
+					var message = "💢 The name you typed in doesn't exist.";
                     SMSPlayer(player, message);
                     break;
                 }
@@ -282,7 +273,7 @@ namespace ResistanceSMS.Controllers
 		/// </summary>
 		public void SendVoteMessage()
 		{
-            var message = "Hey everyone! Please vote for the mission.";
+			var message = "🌟 You must vote to approve this mission! 'Vote yes' or 'Vote no'.";
             SMSPlayerList(this.ActiveGame.Players, message);
 
 		}
@@ -315,7 +306,7 @@ namespace ResistanceSMS.Controllers
 		{
             var lastRound = this.ActiveGame.Rounds.OrderBy(r => r.RoundNumber).Last();
             var missionPlayers = lastRound.MissionPlayers;
-            var message = "Okay mission goers, please vote pass or fail!";
+			var message = "💥 You are on the mission. Please text 'Pass' or 'Fail'!";
             SMSPlayerList(missionPlayers, message);
 		}
 
@@ -358,7 +349,7 @@ namespace ResistanceSMS.Controllers
 		/// <param name="command"></param>
 		public void InvalidCommand(Player player, String command)
 		{
-			this.SMSPlayer(player, "This is an invalid command: " + command);
+			this.SMSPlayer(player, "💢 This is an invalid command: " + command);
 		}
 
 		/// <summary>
@@ -372,8 +363,9 @@ namespace ResistanceSMS.Controllers
 			//TODO: check name collision, check name validity (should be handled
 			//		by parser anyways)
 			String oldName = player.Name;
+			this.ActiveGame.Players.Where(p => p.PlayerId == player.PlayerId).First().Name = name;
 			player.Name = name;
-			String message = player.Name + "has changed their name to " + name;
+			String message = "😮 " + oldName + " has changed their name to '" + name + "'";
 
 			this.SMSPlayerList(this.ActiveGame.Players, message);
 		}
