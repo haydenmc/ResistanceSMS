@@ -260,10 +260,12 @@ namespace ResistanceSMS.Controllers
 		}
 
 		/// <summary>
-		/// Called by the paser to request stats
+		/// Called by the paser to request stats.  If name is empty, it's
+		/// requesting game stats.  If name is not empty, it's asking for
+		/// the listed player's stats.
 		/// </summary>
 		/// <param name="player"></param>
-		public void RequestStats(Player player)
+		public void RequestStats(Player player, String name)
 		{
 
 		}
