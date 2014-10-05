@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ResistanceSMS.Controllers;
 using ResistanceSMS.Models;
+using ResistanceSMS.Tests.Utils;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -35,7 +36,7 @@ namespace ResistanceSMS.Tests.Helpers
 		{
 			//Init variables
 			// Create a test player
-			var player = this.GenerateGameShit();
+			var player = TestUtils.GeneratePlayerWithGame(this.db);
 
 			//Test overall parser input
 			// Simulate 'create' command
@@ -62,7 +63,7 @@ namespace ResistanceSMS.Tests.Helpers
 		{
 			//Init variables
 			// Create a test player
-			var player = this.GenerateGameShit();
+			var player = TestUtils.GeneratePlayerWithGame(this.db);
 
 			//Test overall parser input
 			// Simulate 'create' command
@@ -85,7 +86,7 @@ namespace ResistanceSMS.Tests.Helpers
 		{
 			//Init variables
 			// Create a test player
-			var player = this.GenerateGameShit();
+			var player = TestUtils.GeneratePlayerWithGame(this.db);
 
 			//Test overall parser input
 			// Simulate 'create' command
@@ -122,7 +123,7 @@ namespace ResistanceSMS.Tests.Helpers
 
 			//Init variables
 			// Create a test player
-			var player = this.GenerateGameShit();
+			var player = TestUtils.GeneratePlayerWithGame(this.db);
 
 			//Test overall parser input
 			// Simulate 'create' command
@@ -139,7 +140,7 @@ namespace ResistanceSMS.Tests.Helpers
 
 			//Init variables
 			// Create a test player
-			var player = this.GenerateGameShit();
+			var player = TestUtils.GeneratePlayerWithGame(this.db);
 
 			//Test overall parser input
 			// Simulate 'create' command
@@ -153,7 +154,7 @@ namespace ResistanceSMS.Tests.Helpers
 		{
 			//Init variables
 			// Create a test player
-			var player = this.GenerateGameShit();
+			var player = TestUtils.GeneratePlayerWithGame(this.db);
 
 			//Test overall parser input
 			// Simulate 'create' command
@@ -217,7 +218,7 @@ namespace ResistanceSMS.Tests.Helpers
 		{
 			//Init variables
 			// Create a test player
-			var player = this.GenerateGameShit();
+			var player = TestUtils.GeneratePlayerWithGame(this.db);
 
 			//Test overall parser input
 			// Simulate 'create' command
@@ -232,7 +233,7 @@ namespace ResistanceSMS.Tests.Helpers
 		{
 			//Init variables
 			// Create a test player
-			var player = this.GenerateGameShit();
+			var player = TestUtils.GeneratePlayerWithGame(this.db);
 
 			//Test overall parser input
 			// Simulate 'create' command
@@ -255,53 +256,6 @@ namespace ResistanceSMS.Tests.Helpers
 		}
 
 		//TODO: make it a random generator
-		public Player GenerateGameShit()
-		{
-			var creator = new Player() {
-				PlayerId = Guid.NewGuid(),
-				TurnOrder = 0
-			};
-			db.Players.Add(creator);
-			db.SaveChanges();
-
-			Game g = new Game()
-			{
-				GameId = Guid.NewGuid(),
-				CreateTime = DateTimeOffset.Now,
-				GameState = Game.GameStates.Waiting,
-				Creator = creator,
-				Players = new List<Player>()
-                {
-                    creator,
-                    new Player() {
-                        PlayerId = Guid.NewGuid(),
-                        TurnOrder = 1
-                    },
-                    new Player() {
-                        PlayerId = Guid.NewGuid(),
-                        TurnOrder = 2
-                    },
-                    new Player() {
-                        PlayerId = Guid.NewGuid(),
-                        TurnOrder = 3
-                    },
-                    new Player() {
-                        PlayerId = Guid.NewGuid(),
-                        TurnOrder = 4
-                    }
-                },
-				Rounds = new List<Round>()
-                {
-                    new Round() {
-                        RoundId = Guid.NewGuid()
-                    }
-                }
-			};
-			creator.CurrentGame = g;
-			this.db.Games.Add(g);
-			this.db.SaveChanges();
-
-			return creator;
-		}
+		
 	}
 }
