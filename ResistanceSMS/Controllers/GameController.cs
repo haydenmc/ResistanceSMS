@@ -262,7 +262,7 @@ namespace ResistanceSMS.Controllers
 		public void SendStatsMessage()
 		{
             var message = "";
-            SMSPlayerList(this.ActiveGame.Players, message);
+            this.SMSPlayerList(this.ActiveGame.Players, message);
 		}
 
 		/// <summary>
@@ -283,7 +283,7 @@ namespace ResistanceSMS.Controllers
 		/// <param name="command"></param>
 		public void InvalidCommand(Player player, String command)
 		{
-
+			this.SMSPlayer(player, "This is an invalid command: " + command);
 		}
 
 		/// <summary>
@@ -300,7 +300,7 @@ namespace ResistanceSMS.Controllers
 			player.Name = name;
 			String message = player.Name + "has changed their name to " + name;
 
-			SMSPlayerList(this.ActiveGame.Players, message);
+			this.SMSPlayerList(this.ActiveGame.Players, message);
 		}
 
 		/// <summary>
