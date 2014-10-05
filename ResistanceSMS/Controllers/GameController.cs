@@ -11,6 +11,9 @@ namespace ResistanceSMS.Controllers
 	{
         private ApplicationDbContext _Db = new ApplicationDbContext();
         private Guid _ActiveGameId;
+        private int[,] missionPlayerNumber = new int[,] { {2, 2, 2, 3, 3, 3}
+            , {3, 3, 3, 4, 4, 4}, {2, 4, 3, 4, 4, 4}, {3, 3, 4, 5, 5, 5}, 
+            {3, 4, 4, 5, 5, 5} };
         public Game ActiveGame
         {
             get
