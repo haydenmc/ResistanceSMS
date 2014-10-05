@@ -366,6 +366,11 @@ namespace ResistanceSMS.Controllers
 		public void CheckPassOrFail(Player playerRef, Boolean vote)
 		{
             var player = _Db.Players.Where(p => p.PlayerId == playerRef.PlayerId).FirstOrDefault();
+			if (this.ActiveGame.RoundsOrdered.Last().MissionPlayers.Where(x => x.PlayerId == playerRef.PlayerId).Count() <= 0)
+			{
+				SMSPlayer(player, "💩 You were not selected for this mission.");
+				return;
+			}
 			this.ActiveGame.RoundsOrdered.Last().VoteMissionFail.Remove(player);
 			this.ActiveGame.RoundsOrdered.Last().VoteMissionPass.Remove(player);
             if (vote)
