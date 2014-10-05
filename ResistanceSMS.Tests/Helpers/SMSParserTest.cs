@@ -127,6 +127,7 @@ namespace ResistanceSMS.Tests.Helpers
 			//Test overall parser input
 			// Simulate 'create' command
 			var parser = new ResistanceSMS.Helpers.SMSParser();
+			//new GameController(player.CurrentGame).ActiveGame.Creator = player;
 
 			Assert.IsTrue(parser.ParseStringInput(player, "ready"), "Ready command should return true");
 		}
@@ -256,29 +257,22 @@ namespace ResistanceSMS.Tests.Helpers
 		//TODO: make it a random generator
 		public Player GenerateGameShit()
 		{
-			var player = new Player()
-			{
+			var creator = new Player() {
 				PlayerId = Guid.NewGuid(),
-				Name = "PMcGriddle",
-				PhoneNumber = null,
-				Wins = 0,
-				Losses = 0,
-				TurnOrder = 5,
-				JoinTime = DateTimeOffset.Now,
-				LastActivityTime = DateTimeOffset.Now
+				TurnOrder = 0
 			};
+			db.Players.Add(creator);
+			db.SaveChanges();
 
 			Game g = new Game()
 			{
-
+				GameId = Guid.NewGuid(),
 				CreateTime = DateTimeOffset.Now,
 				GameState = Game.GameStates.Waiting,
+				Creator = creator,
 				Players = new List<Player>()
                 {
-                    new Player() {
-                        PlayerId = Guid.NewGuid(),
-                        TurnOrder = 0
-                    },
+                    creator,
                     new Player() {
                         PlayerId = Guid.NewGuid(),
                         TurnOrder = 1
@@ -294,8 +288,7 @@ namespace ResistanceSMS.Tests.Helpers
                     new Player() {
                         PlayerId = Guid.NewGuid(),
                         TurnOrder = 4
-                    },
-					player
+                    }
                 },
 				Rounds = new List<Round>()
                 {
@@ -304,17 +297,11 @@ namespace ResistanceSMS.Tests.Helpers
                     }
                 }
 			};
+			creator.CurrentGame = g;
 			this.db.Games.Add(g);
-
 			this.db.SaveChanges();
 
-			GameController gc = new GameController(g);
-			gc.ActiveGame.Creator = player;
-			player.CurrentGame = g;
-
-			this.db.SaveChanges();
-
-			return player;
+			return creator;
 		}
 	}
 }
