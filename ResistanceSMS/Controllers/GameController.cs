@@ -94,7 +94,10 @@ namespace ResistanceSMS.Controllers
 			if (toState == Game.GameStates.SelectMissionPlayers)
 			{
 				// Every transition to SelectMissionPlayers means creating a new round.
-				CreateNewRound();
+                if (this.ActiveGame.GameState != Game.GameStates.VoteMissionApprove)
+                {
+                    CreateNewRound();
+                }
 				if (ActiveGame.GameState == Game.GameStates.Waiting)
 				{
 					// transition from Waiting to SelectMissionPlayers
