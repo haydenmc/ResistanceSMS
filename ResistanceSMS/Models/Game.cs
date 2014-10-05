@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
 
@@ -29,5 +30,14 @@ namespace ResistanceSMS.Models
 		public DateTimeOffset CreateTime { get; set; }
 		public bool GameStarted { get; set; }
 		public GameStates GameState { get; set; }
+
+        [NotMapped]
+        public List<Round> RoundsOrdered
+        {
+            get
+            {
+                return this.Rounds.OrderBy(r => r.RoundNumber).ToList();
+            }
+        }
 	}
 }

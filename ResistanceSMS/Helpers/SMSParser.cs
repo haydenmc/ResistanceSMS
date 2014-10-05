@@ -29,6 +29,7 @@ namespace ResistanceSMS.Helpers
 		public const String PASS_REGEX			= "\\A(?i)pass"		+ ANY_REGEX;
 		public const String FAIL_REGEX			= "\\A(?i)fail"		+ ANY_REGEX;
 		public const String STATS_REGEX			= "\\A(?i)stats"	+ ANY_REGEX;
+		public const String MY_STATS_REGEX		= "\\A(?i)mystats"	+ ANY_REGEX;
 		public const String HELP_REGEX			= "\\A(?i)help"		+ ANY_REGEX;
 		public const String NAME_CHANGE_REGEX	= "\\A(?i)name"		+ ANY_REGEX;
 
@@ -51,6 +52,7 @@ namespace ResistanceSMS.Helpers
 				Tuple.Create<String, ParseAction>(PASS_REGEX,			this.ParsePass),
 				Tuple.Create<String, ParseAction>(FAIL_REGEX,			this.ParseFail),
 				Tuple.Create<String, ParseAction>(STATS_REGEX,			this.ParseStats),
+				Tuple.Create<String, ParseAction>(MY_STATS_REGEX,		this.ParsePlayerStats),
 				Tuple.Create<String, ParseAction>(HELP_REGEX,			this.ParseHelp),
 				Tuple.Create<String, ParseAction>(NAME_CHANGE_REGEX,	this.ParseNameChange)
 			};
@@ -137,7 +139,8 @@ namespace ResistanceSMS.Helpers
 		/// <returns></returns>
 		public Boolean ParseReady(Player player, String[] input)
 		{
-			//TODO: pass to GameController function
+			//NOTE: always ready, we dont have a way for the player to say not ready
+			new GameController(player.CurrentGame).PlayerIsReady(player, true);
 			return true;
 		}
 
@@ -150,7 +153,7 @@ namespace ResistanceSMS.Helpers
 		/// <returns></returns>
 		public Boolean ParsePut(Player player, String[] input)
 		{
-			//TODO: send list of players to GameController function
+			new GameController(player.CurrentGame).SelectMissionPlayers(player, input);
 			return true;
 		}
 
@@ -174,12 +177,12 @@ namespace ResistanceSMS.Helpers
 
 			if(yesMatch.Success)
 			{
-				//TODO: call GameController function for yes vote
+				new GameController(player.CurrentGame).PlayerVote(player, true);
 				return true;
 			}
 			else if(noMatch.Success)
 			{
-				//TODO: call GameController function for no vote
+				new GameController(player.CurrentGame).PlayerVote(player, false);
 				return true;
 			}
 
@@ -196,7 +199,7 @@ namespace ResistanceSMS.Helpers
 		/// <returns></returns>
 		public Boolean ParsePass(Player player, String[] input)
 		{
-			//TODO: call GameController function for passing vote
+			new GameController(player.CurrentGame).CheckPassOrFail(player, true);
 			return true;
 		}
 
@@ -209,21 +212,66 @@ namespace ResistanceSMS.Helpers
 		/// <returns></returns>
 		public Boolean ParseFail(Player player, String[] input)
 		{
-			//TODO: call GameController function for failing vote
+			new GameController(player.CurrentGame).CheckPassOrFail(player, false);
 			return true;
 		}
 
 		/// <summary>
-		/// Function used to tell the server to return stats to the player, parameters
-		/// determine what stats to return
+		/// Function used to tell the server to return stats to the player, no 
+		/// parameter means it's asking for game stats, a parameter means it's
+		/// requesting stats of a player
 		/// </summary>
 		/// <param name="player"></param>
 		/// <param name="input"></param>
 		/// <returns></returns>
 		public Boolean ParseStats(Player player, String[] input)
 		{
-			//TODO: figure out what parameters to use and what stats to return
-			return true;
+			//check for null
+			if(input == null)
+			{
+				throw new Exception("Exception at ParseStats, params cannot be empty");
+			}
+
+			//if input[0] is empty then its asking for game stats
+			if(input[0].Equals(""))
+			{
+				//TODO: call game stats
+				new GameController(player.CurrentGame).RequestStats(player, "");
+				return true;
+			}
+			else
+			{
+				return this.ParseStats(player, input);
+			}
+		}
+
+		/// <summary>
+		/// Function used to tell the server to return player stats to the player, if
+		/// parameter is empty, return player's own stats, else the listed player's
+		/// stats
+		/// </summary>
+		/// <param name="player"></param>
+		/// <param name="input"></param>
+		/// <returns></returns>
+		public Boolean ParsePlayerStats(Player player, String[] input)
+		{
+			//check for null
+			if (input == null)
+			{
+				throw new Exception("Exception at ParseMyStats, params cannot be empty");
+			}
+
+			//if input[0] is empty then its asking for my stats
+			if (input[0].Equals(""))
+			{
+				new GameController(player.CurrentGame).RequestStats(player, player.Name);
+				return true;
+			}
+			else
+			{
+				new GameController(player.CurrentGame).RequestStats(player, input[0]);
+				return true;
+			}
 		}
 
 		/// <summary>
@@ -250,11 +298,11 @@ namespace ResistanceSMS.Helpers
 		{
 			//check if there are params
 			if (input.Length <= 0)
-		{
+			{
 				throw new Exception("Exception at ParseNameChange, params cannot be empty");
 			}
 
-			//TODO: call GameController function, input[0] is the name
+			new GameController(player.CurrentGame).ChangeName(player, input[0]);
 			return true;
 		}
 
