@@ -45,8 +45,15 @@ namespace ResistanceSMS.Controllers
 					db.Players.Add(player);
 					db.SaveChanges();
 				}
-				Parser.ParseStringInput(player, twilioRequest.Body);
-				return Request.CreateResponse(HttpStatusCode.OK);
+				try
+				{
+					Parser.ParseStringInput(player, twilioRequest.Body);
+				}
+				catch (Exception e)
+				{
+					new GameController(null).SMSPlayer(player, "💣 PARSE ERROR: " + e.Message);
+				}
+				return Request.CreateResponse<string>(HttpStatusCode.OK,"");
 			}
 		}
 

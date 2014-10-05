@@ -300,26 +300,36 @@ namespace ResistanceSMS.Controllers
 		/// <param name="vote"></param>
 		public void PlayerVote(Player player, Boolean vote)
 		{
-
-		}
-
-		/// <summary>
-		/// Checks if the mission going votes have been rejected, if 5 rejections
-		/// have happened then the game is over.  This should be called by 
-		/// PlayerVote after all people has voted
-		/// </summary>
-		public void CheckRejected()
-		{
-            if (this.ActiveGame.RoundsOrdered.Last().VoteMissionApprove.Count
-                > this.ActiveGame.RoundsOrdered.Last().VoteMissionReject.Count)
-            {
-                this.ActiveGame.RoundsOrdered.Last().NumRejections++;
-            }
-            else if (this.ActiveGame.RoundsOrdered.Last().NumRejections == 5)
-            {
-                //end game
-            }
-
+			var round = this.ActiveGame.RoundsOrdered.Last();
+			round.VoteMissionApprove.Remove(player);
+			round.VoteMissionReject.Remove(player);
+			if (vote)
+			{
+				round.VoteMissionApprove.Add(player);
+			}
+			else
+			{
+				round.VoteMissionReject.Add(player);
+			}
+			_Db.SaveChanges();
+			if (round.VoteMissionReject.Count + round.VoteMissionApprove.Count == this.ActiveGame.Players.Count)
+			{
+				if (round.VoteMissionApprove.Count >= round.VoteMissionReject.Count)
+				{
+					// TODO: Reveal players' votes.
+					SMSPlayerList(this.ActiveGame.Players, "👍 Mission approved. Standby for mission status...");
+					StateTransition(Game.GameStates.VoteMissionPass);
+				}
+				else
+				{
+					SMSPlayerList(this.ActiveGame.Players, "👎 Mission rejected. The Resistance is suspicious...");
+					round.NumRejections++;
+					round.VoteMissionApprove.Clear();
+					round.VoteMissionReject.Clear();
+					_Db.SaveChanges();
+					StateTransition(Game.GameStates.SelectMissionPlayers);
+				}
+			}
 		}
 
 		/// <summary>

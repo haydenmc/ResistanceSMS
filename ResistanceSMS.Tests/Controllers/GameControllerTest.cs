@@ -147,6 +147,24 @@ namespace ResistanceSMS.Tests.Controllers
                 Assert.IsTrue(player.TurnOrder == i, "Players are not in correct turn order.");
             }
         }
+
+		[TestMethod]
+		public void TestMissionApprovalVote()
+		{
+			Player p = TestUtils.GeneratePlayerWithGame(this.db);
+			Game g = p.CurrentGame;
+			GameController gc = new GameController(g);
+			gc.StateTransition(Game.GameStates.VoteMissionApprove);
+			var plist = gc.ActiveGame.Players.ToList();
+			gc.PlayerVote(plist[0], true);
+			gc.PlayerVote(plist[1], true);
+			gc.PlayerVote(plist[2], true);
+			gc.PlayerVote(plist[3], false);
+			gc.PlayerVote(plist[4], false);
+			Assert.IsTrue(gc.ActiveGame.GameState == Game.GameStates.VoteMissionPass, "Vote didn't transition to pass");
+			Assert.IsTrue(gc.ActiveGame.RoundsOrdered.Last().VoteMissionApprove.Count == 3, "Vote approve count doesn't match");
+			Assert.IsTrue(gc.ActiveGame.RoundsOrdered.Last().VoteMissionReject.Count == 2, "Vote reject count doesn't match");
+		}
         
         [TestMethod]
         public void TestLeaderSelect()
