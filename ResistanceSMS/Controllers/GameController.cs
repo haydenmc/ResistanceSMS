@@ -127,6 +127,7 @@ namespace ResistanceSMS.Controllers
 				this.SendStatsMessage();
 			}
             ActiveGame.GameState = toState;
+            _Db.SaveChanges();
 		}
 
         //Helper Methods
