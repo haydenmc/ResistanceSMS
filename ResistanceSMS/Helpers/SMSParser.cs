@@ -12,8 +12,8 @@ namespace ResistanceSMS.Helpers
 	{
 		//Utils regex
 		public const String ANY_SUBSTRING_NAME	= "ANY";
-		
-		public const String DELIMIT_PARAM_REGEX = "((?:[^a-zA-Z0-9]|\\s)+)";
+
+		public const String GROUP_PARAM_REGEX	= "((?:[a-zA-Z0-9]|!\\s)+)";
 		public const String DELIMIT_COM_REGEX	= "([^a-zA-Z0-9]|\\s)*";
 		public const String ANY_REGEX			= DELIMIT_COM_REGEX + "(?<" + ANY_SUBSTRING_NAME + ">.*)\\z";
 		
@@ -76,13 +76,18 @@ namespace ResistanceSMS.Helpers
 				{
 					//Generate regex matches
 					String paramString = new Regex(this.RegexArray[x].Item1).Match(input).Groups[ANY_SUBSTRING_NAME].ToString();
-					String[] paramList = Regex.Split(paramString, DELIMIT_PARAM_REGEX);
+					//String[] paramList = Regex.Split(paramString, GROUP_PARAM_REGEX);
+
+					Match[] matches = Regex.Matches(paramString, GROUP_PARAM_REGEX).Cast<Match>().ToArray();
+					String[] paramList = new String[matches.Length];
+
 					
 					System.Diagnostics.Debug.WriteLine("Param String: " + paramString);
 
 					//For debugging purposes to print out the list of params
 					for (int y = 0; y < paramList.Length; y++)
 					{
+						paramList[y] = matches[y].ToString();
 						System.Diagnostics.Debug.WriteLine("Params" + y + ": " + paramList[y]);
 					}
  
@@ -120,7 +125,7 @@ namespace ResistanceSMS.Helpers
 		public Boolean ParseJoin(Player player, String[] input)
 		{
 			//check if there are params
-			if (input == null || input[0].Equals(""))
+			if (input == null || input.Length <= 0)
 			{
 				throw new Exception("Exception at ParseJoin, params cannot be empty");
 			}
@@ -167,7 +172,7 @@ namespace ResistanceSMS.Helpers
 		public Boolean ParseVote(Player player, String[] input)
 		{
 			//check if there are params
-			if(input == null || input[0].Equals(""))
+			if(input == null || input.Length <= 0)
 			{
 				throw new Exception("Exception at ParseVote, params cannot be empty");
 			}
@@ -226,6 +231,7 @@ namespace ResistanceSMS.Helpers
 		/// <returns></returns>
 		public Boolean ParseStats(Player player, String[] input)
 		{
+			System.Diagnostics.Debug.WriteLine("Length: " + input.Length);
 			//check for null
 			if(input == null)
 			{
@@ -233,7 +239,7 @@ namespace ResistanceSMS.Helpers
 			}
 
 			//if input[0] is empty then its asking for game stats
-			if(input[0].Equals(""))
+			if(input.Length <= 0 || input[0].Equals(""))
 			{
 				//TODO: call game stats
 				new GameController(player.CurrentGame).RequestStats(player, "");
@@ -262,7 +268,7 @@ namespace ResistanceSMS.Helpers
 			}
 
 			//if input[0] is empty then its asking for my stats
-			if (input[0].Equals(""))
+			if (input.Length <= 0 || input[0].Equals(""))
 			{
 				new GameController(player.CurrentGame).RequestStats(player, player.Name);
 				return true;
