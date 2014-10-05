@@ -50,7 +50,7 @@ namespace ResistanceSMS.Controllers
 				var game = new Game()
 				{
 					GameId = Guid.NewGuid(),
-				FriendlyId = friendlyId, // TODO: Make sure this doesn't collide
+					FriendlyId = friendlyId, // TODO: Make sure this doesn't collide
 					Creator = player,
 					Players = new List<Player>(),
 					ReadyPlayers = new List<Player>(),
@@ -218,7 +218,7 @@ namespace ResistanceSMS.Controllers
             var lastRound = this.ActiveGame.Rounds.OrderBy(r => r.RoundNumber).Last();
             var roundNumber = lastRound.RoundNumber;
             var playerNumber = this.ActiveGame.Players.Count;
-            int numberOfMissionPlayers = missionPlayerNumber[roundNumber-1, playerNumber-5];
+            int numberOfMissionPlayers = missionPlayerNumber[roundNumber, playerNumber-5];
             if (players.Count() != numberOfMissionPlayers) 
             {
                 // the number of mission players does not match

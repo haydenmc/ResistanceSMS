@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ResistanceSMS.Controllers;
 using ResistanceSMS.Models;
 using System;
 using System.Collections.Generic;
@@ -34,7 +35,7 @@ namespace ResistanceSMS.Tests.Helpers
 		{
 			//Init variables
 			// Create a test player
-			var player = this.GeneratePlayer();
+			var player = this.GenerateGameShit();
 
 			//Test overall parser input
 			// Simulate 'create' command
@@ -61,7 +62,7 @@ namespace ResistanceSMS.Tests.Helpers
 		{
 			//Init variables
 			// Create a test player
-			var player = this.GeneratePlayer();
+			var player = this.GenerateGameShit();
 
 			//Test overall parser input
 			// Simulate 'create' command
@@ -84,7 +85,7 @@ namespace ResistanceSMS.Tests.Helpers
 		{
 			//Init variables
 			// Create a test player
-			var player = this.GeneratePlayer();
+			var player = this.GenerateGameShit();
 
 			//Test overall parser input
 			// Simulate 'create' command
@@ -121,7 +122,7 @@ namespace ResistanceSMS.Tests.Helpers
 
 			//Init variables
 			// Create a test player
-			var player = this.GeneratePlayer();
+			var player = this.GenerateGameShit();
 
 			//Test overall parser input
 			// Simulate 'create' command
@@ -137,7 +138,7 @@ namespace ResistanceSMS.Tests.Helpers
 
 			//Init variables
 			// Create a test player
-			var player = this.GeneratePlayer();
+			var player = this.GenerateGameShit();
 
 			//Test overall parser input
 			// Simulate 'create' command
@@ -151,7 +152,7 @@ namespace ResistanceSMS.Tests.Helpers
 		{
 			//Init variables
 			// Create a test player
-			var player = this.GeneratePlayer();
+			var player = this.GenerateGameShit();
 
 			//Test overall parser input
 			// Simulate 'create' command
@@ -215,7 +216,7 @@ namespace ResistanceSMS.Tests.Helpers
 		{
 			//Init variables
 			// Create a test player
-			var player = this.GeneratePlayer();
+			var player = this.GenerateGameShit();
 
 			//Test overall parser input
 			// Simulate 'create' command
@@ -230,7 +231,7 @@ namespace ResistanceSMS.Tests.Helpers
 		{
 			//Init variables
 			// Create a test player
-			var player = this.GeneratePlayer();
+			var player = this.GenerateGameShit();
 
 			//Test overall parser input
 			// Simulate 'create' command
@@ -253,7 +254,7 @@ namespace ResistanceSMS.Tests.Helpers
 		}
 
 		//TODO: make it a random generator
-		public Player GeneratePlayer()
+		public Player GenerateGameShit()
 		{
 			var player = new Player()
 			{
@@ -262,11 +263,56 @@ namespace ResistanceSMS.Tests.Helpers
 				PhoneNumber = null,
 				Wins = 0,
 				Losses = 0,
+				TurnOrder = 5,
 				JoinTime = DateTimeOffset.Now,
 				LastActivityTime = DateTimeOffset.Now
 			};
-			db.Players.Add(player);
-			db.SaveChanges();
+
+			Game g = new Game()
+			{
+
+				CreateTime = DateTimeOffset.Now,
+				GameState = Game.GameStates.Waiting,
+				Players = new List<Player>()
+                {
+                    new Player() {
+                        PlayerId = Guid.NewGuid(),
+                        TurnOrder = 0
+                    },
+                    new Player() {
+                        PlayerId = Guid.NewGuid(),
+                        TurnOrder = 1
+                    },
+                    new Player() {
+                        PlayerId = Guid.NewGuid(),
+                        TurnOrder = 2
+                    },
+                    new Player() {
+                        PlayerId = Guid.NewGuid(),
+                        TurnOrder = 3
+                    },
+                    new Player() {
+                        PlayerId = Guid.NewGuid(),
+                        TurnOrder = 4
+                    },
+					player
+                },
+				Rounds = new List<Round>()
+                {
+                    new Round() {
+                        RoundId = Guid.NewGuid()
+                    }
+                }
+			};
+			this.db.Games.Add(g);
+
+			this.db.SaveChanges();
+
+			GameController gc = new GameController(g);
+			gc.ActiveGame.Creator = player;
+			player.CurrentGame = g;
+
+			this.db.SaveChanges();
 
 			return player;
 		}
