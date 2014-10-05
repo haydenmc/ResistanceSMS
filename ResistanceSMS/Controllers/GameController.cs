@@ -94,32 +94,18 @@ namespace ResistanceSMS.Controllers
                 // assign the next player to be the leader
                 AssignLeader();
                 SendSelectMissionPlayersMessage();
-              //  SelectMissionPlayers();
             }
             else if (ActiveGame.GameState == Game.GameStates.VoteMissionApprove
               && toState == Game.GameStates.VoteMissionPass)
             {
                 // transition from VoteMissionApprove to VoteMissionPass
-              //  Vote();
-                /*using (var db = new ApplicationDbContext())
-			    {
-                    var round = this.ActiveGame.Rounds.Last();
-                    if (round.VoteMissionReject.Count == this.ActiveGame.Players.Count)
-                    {
-                        // the number of rejection is the same of the number of player in the game
-                        // the game ends directly
-                        StateTransition(Game.GameStates.GameEnd);
-                    } else if (round.VoteMissionReject.Count )
-                    {
-                        // the 
-                    }
-                }*/
-              //  CheckRejected();
+              
+              
             }
             else if (toState == Game.GameStates.GameEnd)
             {
                 if (ActiveGame.GameState == Game.GameStates.VoteMissionPass)
-			{
+			    {
                     // transition from VoteMissionPass to GameEnd
 					this.SendPassOrFailMessage();
                 }
@@ -172,10 +158,6 @@ namespace ResistanceSMS.Controllers
             var message = this.ActiveGame.Rounds.OrderBy(r => r.RoundNumber).Last().Leader.Name +  "is the leader for this round.";
             SMSPlayerList(this.ActiveGame.Players, message);
         }
-        public void SelectMissionPlayers()
-        {
-
-        }
 
 		public void CreateNewRound()
 		{
@@ -187,7 +169,8 @@ namespace ResistanceSMS.Controllers
 		/// </summary>
 		public void SendSelectMissionPlayersMessage()
 		{
-
+            var message="Hey leader! Please select mission players!"; 
+            SMSPlayer(this.ActiveGame.Rounds.OrderBy(r => r.RoundNumber).Last().Leader, message);
 		}
 
 		/// <summary>
@@ -207,6 +190,8 @@ namespace ResistanceSMS.Controllers
 		/// </summary>
 		public void SendVoteMessage()
 		{
+            var message = "Hey everyone! Please vote for the mission.";
+            SMSPlayerList(this.ActiveGame.Players, message);
 
 		}
 
@@ -236,7 +221,10 @@ namespace ResistanceSMS.Controllers
 		/// </summary>
 		public void SendPassOrFailMessage()
 		{
-
+            var lastRound = this.ActiveGame.Rounds.OrderBy(r => r.RoundNumber).Last();
+            var missionPlayers = lastRound.MissionPlayers;
+            var message = "Okay mission goers, please vote pass or fail!";
+            SMSPlayerList(missionPlayers, message);
 		}
 
 		/// <summary>
@@ -256,7 +244,8 @@ namespace ResistanceSMS.Controllers
 		/// </summary>
 		public void SendStatsMessage()
 		{
-
+            var message = "";
+            SMSPlayerList(this.ActiveGame.Players, message);
 		}
 
 		/// <summary>
