@@ -90,44 +90,44 @@ namespace ResistanceSMS.Controllers
 		}
 
         public void StateTransition(Game.GameStates toState)
-        {
-            if (toState == Game.GameStates.SelectMissionPlayers)
-            {
-                // Every transition to SelectMissionPlayers means creating a new round.
-				CreateNewRound();
-                if (ActiveGame.GameState == Game.GameStates.Waiting)
-                {
-                    // transition from Waiting to SelectMissionPlayers
-                    // needs to join game, assign a random leader and assign teams
-                    AssignTeams();
-                    AssignLeader();
-                }
-            }
-            else if (ActiveGame.GameState == Game.GameStates.SelectMissionPlayers
-              && toState == Game.GameStates.VoteMissionApprove)
-            {
-                // transition from SelectMissionPlayers to VoteMissionApprove
-                // assign the next player to be the leader
-                AssignLeader();
-            }
-            else if (ActiveGame.GameState == Game.GameStates.VoteMissionApprove
-              && toState == Game.GameStates.VoteMissionPass)
-            {
-                // transition from VoteMissionApprove to VoteMissionPass
-              
-              
-                    }
-            else if (toState == Game.GameStates.GameEnd)
-            {
-                if (ActiveGame.GameState == Game.GameStates.VoteMissionPass)
+		{
+			if (toState == Game.GameStates.SelectMissionPlayers)
 			{
-                    // transition from VoteMissionPass to GameEnd
+				// Every transition to SelectMissionPlayers means creating a new round.
+				CreateNewRound();
+				if (ActiveGame.GameState == Game.GameStates.Waiting)
+				{
+					// transition from Waiting to SelectMissionPlayers
+					// needs to join game, assign a random leader and assign teams
+					AssignTeams();
+				}
+				AssignLeader();
+			}
+			else if (ActiveGame.GameState == Game.GameStates.SelectMissionPlayers
+				&& toState == Game.GameStates.VoteMissionApprove)
+			{
+				// transition from SelectMissionPlayers to VoteMissionApprove
+				// assign the next player to be the leader
+				SendVoteMessage();
+			}
+			else if (ActiveGame.GameState == Game.GameStates.VoteMissionApprove
+				&& toState == Game.GameStates.VoteMissionPass)
+			{
+				// transition from VoteMissionApprove to VoteMissionPass
+              
+              
+			}
+			else if (toState == Game.GameStates.GameEnd)
+			{
+				if (ActiveGame.GameState == Game.GameStates.VoteMissionPass)
+				{
+					// transition from VoteMissionPass to GameEnd
 					this.SendPassOrFailMessage();
-                }
+				}
 				this.SendStatsMessage();
 			}
-            ActiveGame.GameState = toState;
-            _Db.SaveChanges();
+			ActiveGame.GameState = toState;
+			_Db.SaveChanges();
 		}
 
         //Helper Methods
