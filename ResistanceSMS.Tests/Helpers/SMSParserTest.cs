@@ -180,7 +180,7 @@ namespace ResistanceSMS.Tests.Helpers
 			{
 				PlayerId = Guid.NewGuid(),
 				Name = "PMcGriddle",
-				PhoneNumber = "+12242120088",
+				PhoneNumber = null,
 				Wins = 0,
 				Losses = 0,
 				JoinTime = DateTimeOffset.Now,

@@ -46,18 +46,6 @@ namespace ResistanceSMS.Controllers
 					db.SaveChanges();
 				}
 				Parser.ParseStringInput(player, twilioRequest.Body);
-
-				//var response = new Twilio.TwiML.TwilioResponse();
-				//response.Message("SOUNDS GOOD, " + player.Name);
-				//// Force XML response... Twilio doesn't specify an Accept header.
-				//return ResponseMessage(new HttpResponseMessage(HttpStatusCode.OK)
-				//{
-				//	Content = new ObjectContent<XElement>(response.Element,
-				//	   new System.Net.Http.Formatting.XmlMediaTypeFormatter
-				//	   {
-				//		   UseXmlSerializer = true
-				//	   })
-				//});
 				return ResponseMessage(new HttpResponseMessage(HttpStatusCode.OK));
 			}
 		}
