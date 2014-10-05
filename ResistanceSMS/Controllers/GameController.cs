@@ -93,15 +93,15 @@ namespace ResistanceSMS.Controllers
                 // transition from SelectMissionPlayers to VoteMissionApprove
                 // assign the next player to be the leader
                 AssignLeader();
-				//sends message to the leader to select players
-				SendSelectMissionPlayersMessage();
+                SendSelectMissionPlayersMessage();
+              //  SelectMissionPlayers();
             }
             else if (ActiveGame.GameState == Game.GameStates.VoteMissionApprove
               && toState == Game.GameStates.VoteMissionPass)
             {
                 // transition from VoteMissionApprove to VoteMissionPass
-				this.SendVoteMessage();
-				/*using (var db = new ApplicationDbContext())
+              //  Vote();
+                /*using (var db = new ApplicationDbContext())
 			    {
                     var round = this.ActiveGame.Rounds.Last();
                     if (round.VoteMissionReject.Count == this.ActiveGame.Players.Count)
@@ -114,11 +114,12 @@ namespace ResistanceSMS.Controllers
                         // the 
                     }
                 }*/
+              //  CheckRejected();
             }
             else if (toState == Game.GameStates.GameEnd)
             {
                 if (ActiveGame.GameState == Game.GameStates.VoteMissionPass)
-				{
+			{
                     // transition from VoteMissionPass to GameEnd
 					this.SendPassOrFailMessage();
                 }
@@ -171,6 +172,10 @@ namespace ResistanceSMS.Controllers
             var message = this.ActiveGame.Rounds.OrderBy(r => r.RoundNumber).Last().Leader.Name +  "is the leader for this round.";
             SMSPlayerList(this.ActiveGame.Players, message);
         }
+        public void SelectMissionPlayers()
+        {
+
+        }
 
 		public void CreateNewRound()
 		{
@@ -188,7 +193,9 @@ namespace ResistanceSMS.Controllers
 		/// <summary>
 		/// Is called by the parser to set the mission players and increment state
 		/// </summary>
-		public void SelectMissionPlayers()
+		/// <param name="player"></param>
+		/// <param name="players"></param>
+		public void SelectMissionPlayers(Player player, String[] players)
 		{
 
 			//increment
@@ -207,7 +214,9 @@ namespace ResistanceSMS.Controllers
 		/// Is called by the parser to inform the game that a player has voted
 		/// for the people going on the mission
 		/// </summary>
-		public void PlayerVote()
+		/// <param name="player"></param>
+		/// <param name="vote"></param>
+		public void PlayerVote(Player player, Boolean vote)
 		{
 
 		}
@@ -235,7 +244,9 @@ namespace ResistanceSMS.Controllers
 		/// passed or failed the mission.  the state should be incremented after
 		/// all mission goers have voted
 		/// </summary>
-		public void CheckPassOrFail()
+		/// <param name="player"></param>
+		/// <param name="vote"></param>
+		public void CheckPassOrFail(Player player, Boolean vote)
 		{
 
 		}
@@ -251,7 +262,18 @@ namespace ResistanceSMS.Controllers
 		/// <summary>
 		/// Called by the paser to request stats
 		/// </summary>
-		public void RequestStats()
+		/// <param name="player"></param>
+		public void RequestStats(Player player)
+		{
+
+		}
+
+		/// <summary>
+		/// Called by the parser when an invalid command is called
+		/// </summary>
+		/// <param name="player"></param>
+		/// <param name="command"></param>
+		public void InvalidCommand(Player player, String command)
 		{
 
 		}
