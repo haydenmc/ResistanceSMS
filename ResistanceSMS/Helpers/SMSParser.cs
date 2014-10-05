@@ -241,7 +241,7 @@ namespace ResistanceSMS.Helpers
 			}
 			else
 			{
-				return this.ParseStats(player, input);
+				return this.ParsePlayerStats(player, input);
 			}
 		}
 

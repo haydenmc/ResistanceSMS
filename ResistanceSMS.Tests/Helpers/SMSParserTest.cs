@@ -246,7 +246,30 @@ namespace ResistanceSMS.Tests.Helpers
 		[TestMethod]
 		public void StatsTest()
 		{
-			//TODO: implement
+			//Init variables
+			// Create a test player
+			var player = TestUtils.GeneratePlayerWithGame(this.db);
+
+			//Test overall parser input
+			// Simulate 'create' command
+			var parser = new ResistanceSMS.Helpers.SMSParser();
+
+			Assert.IsTrue(parser.ParseStringInput(player, "STATS"), "Stats command with no parameters should return true");
+			Assert.IsTrue(parser.ParseStringInput(player, "stats poop"), "Stats command with parameters should return true");
+			Assert.IsTrue(parser.ParseStringInput(player, "mystats"), "MyStarts command should return true");
+			Assert.IsTrue(parser.ParseStringInput(player, "mystats:Dfes3fasb"), "mystats command with parameters should return true");
+			
+			Boolean exceptionChecked = false;
+			try
+			{
+				parser.ParseStats(player, null);
+			}
+			catch (Exception e)
+			{
+				exceptionChecked = true;
+			}
+			Assert.IsTrue(exceptionChecked, "ParseStats not catching null input");
+
 		}
 
 		[TestMethod]
