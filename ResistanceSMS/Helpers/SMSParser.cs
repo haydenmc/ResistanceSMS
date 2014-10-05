@@ -139,7 +139,8 @@ namespace ResistanceSMS.Helpers
 		/// <returns></returns>
 		public Boolean ParseReady(Player player, String[] input)
 		{
-			//TODO: pass to GameController function
+			//NOTE: always ready, we dont have a way for the player to say not ready
+			new GameController(player.CurrentGame).PlayerIsReady(player, true);
 			return true;
 		}
 
@@ -297,11 +298,11 @@ namespace ResistanceSMS.Helpers
 		{
 			//check if there are params
 			if (input.Length <= 0)
-		{
+			{
 				throw new Exception("Exception at ParseNameChange, params cannot be empty");
 			}
 
-			//TODO: call GameController function, input[0] is the name
+			new GameController(player.CurrentGame).ChangeName(player, input[0]);
 			return true;
 		}
 

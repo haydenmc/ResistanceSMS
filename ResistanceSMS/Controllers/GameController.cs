@@ -181,6 +181,17 @@ namespace ResistanceSMS.Controllers
 		{
 
 		}
+
+		/// <summary>
+		/// Called by the parser when a player says they are ready
+		/// </summary>
+		/// <param name="player"></param>
+		/// <param name="ready"></param>
+		public void PlayerIsReady(Player player, Boolean ready)
+		{
+			//NOTE: don't have to handle no ready yet since there is no way for
+			//		the player to be change from ready to not ready
+		}
 		
 		/// <summary>
 		/// Sends a text message to the leader to select the mission players
@@ -276,6 +287,16 @@ namespace ResistanceSMS.Controllers
 		/// <param name="player"></param>
 		/// <param name="command"></param>
 		public void InvalidCommand(Player player, String command)
+		{
+
+		}
+
+		/// <summary>
+		/// Called by the parser when a player wants to change his name
+		/// </summary>
+		/// <param name="player"></param>
+		/// <param name="name"></param>
+		public void ChangeName(Player player, String name)
 		{
 
 		}
