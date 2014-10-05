@@ -11,7 +11,7 @@ namespace ResistanceSMS.Controllers
 	{
         private ApplicationDbContext _Db = new ApplicationDbContext();
         private Guid _ActiveGameId;
-        public const int[,] missionPlayerNumber = new int[,] 
+        public int[,] missionPlayerNumber = new int[,] 
             { {2, 2, 2, 3, 3, 3}, 
               {3, 3, 3, 4, 4, 4}, 
               {2, 4, 3, 4, 4, 4}, 
@@ -197,7 +197,28 @@ namespace ResistanceSMS.Controllers
 		/// <param name="players"></param>
 		public void SelectMissionPlayers(Player player, String[] players)
 		{
-            int numberOfMissionPlayers = missionPlayerNumber[this.];
+            
+            var lastRound = this.ActiveGame.Rounds.OrderBy(r => r.RoundNumber).Last();
+            var roundNumber = lastRound.RoundNumber;
+            var playerNumber = this.ActiveGame.Players.Count;
+            int numberOfMissionPlayers = missionPlayerNumber[roundNumber-1, playerNumber-5];
+            if (players.Count() != numberOfMissionPlayers) 
+            {
+                // the number of mission players does not match
+
+            }
+            else if (!player.Equals(this.ActiveGame.Rounds.OrderBy(r => r.RoundNumber).Last().Leader))
+            {
+                //  the player who sent the message does not match
+            }
+            //else if () 
+            {
+
+            }
+            for (int i = 0; i < numberOfMissionPlayers; i++ )
+            {
+                String candidate = players[i];
+            }
 			//increment
 		}
 
