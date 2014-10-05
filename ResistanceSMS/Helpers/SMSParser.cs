@@ -125,7 +125,7 @@ namespace ResistanceSMS.Helpers
 			//check if there are params
 			if (input == null || input.Length <= 0)
 			{
-				throw new Exception("Exception at ParseJoin, params cannot be empty");
+                throw new Exception("❔ Text 'Join [code]' to join a game!");
 			}
 
 			//Sends the game id over to the GameController
@@ -172,7 +172,7 @@ namespace ResistanceSMS.Helpers
 			//check if there are params
 			if(input == null || input.Length <= 0)
 			{
-				throw new Exception("Exception at ParseVote, params cannot be empty");
+				throw new Exception("❔ Text 'Vote [Yes/No]' to Approve or Reject the mission!");
 			}
 
 			Match yesMatch = new Regex(VOTE_YES_ALTS_REGEX).Match(input[0]);
@@ -190,7 +190,7 @@ namespace ResistanceSMS.Helpers
 			}
 
 			//no valid params, throw exception
-			throw new Exception("Exception at ParseVote, params not valid");
+            throw new Exception("❔ Text 'Vote [Yes/No]' to Approve or Reject the mission!");
 		}
 
 		/// <summary>
@@ -233,7 +233,7 @@ namespace ResistanceSMS.Helpers
 			//check for null
 			if(input == null)
 			{
-				throw new Exception("Exception at ParseStats, params cannot be empty");
+                throw new Exception("❔ Text 'STATS' for current game stats, or 'STATS [player]' to view a player's stats!");
 			}
 
 			//if input[0] is empty then its asking for game stats
@@ -288,7 +288,7 @@ namespace ResistanceSMS.Helpers
 		public Boolean ParseHelp(Player player, String[] input)
 		{
 			//TODO: add parameter and call GameController function
-            var message = "You can say CREATE, JOIN, NAME, STATS, MYSTATS!";
+            var message = "❔ You can say CREATE, JOIN, NAME, STATS, or MYSTATS!";
             new GameController(player.CurrentGame).SMSPlayer(player, message);
 			return true;
 		}
@@ -305,7 +305,7 @@ namespace ResistanceSMS.Helpers
 			//check if there are params
 			if (input.Length <= 0)
 			{
-				throw new Exception("Exception at ParseNameChange, params cannot be empty");
+                throw new Exception("❔ Text 'Name [yourname]' to change your name!");
 			}
 
 			new GameController(player.CurrentGame).ChangeName(player, input[0]);
