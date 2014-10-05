@@ -62,10 +62,14 @@ namespace ResistanceSMS.Controllers
 		{
 			using (var db = new ApplicationDbContext())
 			{
-				db.Players.RemoveRange(db.Players);
-				db.Rounds.RemoveRange(db.Rounds);
 				db.Games.RemoveRange(db.Games);
 				db.SaveChanges();
+				db.Rounds.RemoveRange(db.Rounds);
+				db.SaveChanges();
+				db.Players.RemoveRange(db.Players);
+				db.SaveChanges();
+				
+				
 			}
 			return Request.CreateResponse(HttpStatusCode.OK);
 		}

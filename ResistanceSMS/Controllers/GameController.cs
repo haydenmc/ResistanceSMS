@@ -237,10 +237,10 @@ namespace ResistanceSMS.Controllers
 				SMSPlayer(player, message);
 				return;
 			}
-			if (!player.Equals(this.ActiveGame.Rounds.OrderBy(r => r.RoundNumber).Last().Leader))
+			if (!player.PlayerId.Equals(this.ActiveGame.Rounds.OrderBy(r => r.RoundNumber).Last().Leader.PlayerId))
 			{
 				//  the player who sent the message does not match
-				var message = "💢 You are not the leader! SMS is expensive!";
+				var message = "💢 You are not the leader!";
 				SMSPlayer(player, message);
 				return;
 			}
