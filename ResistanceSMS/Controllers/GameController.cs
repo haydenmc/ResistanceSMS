@@ -226,24 +226,27 @@ namespace ResistanceSMS.Controllers
             var roundNumber = lastRound.RoundNumber;
             var playerNumber = this.ActiveGame.Players.Count;
             int numberOfMissionPlayers = missionPlayerNumber[roundNumber, playerNumber-5];
+			if (!this.ActiveGame.GameState.Equals(Game.GameStates.SelectMissionPlayers))
+			{
+				//  the game state does not match
+				var message = "💢 Invalid command at this time.";
+				SMSPlayer(player, message);
+				return;
+			}
+			if (!player.Equals(this.ActiveGame.Rounds.OrderBy(r => r.RoundNumber).Last().Leader))
+			{
+				//  the player who sent the message does not match
+				var message = "💢 You are not the leader! SMS is expensive!";
+				SMSPlayer(player, message);
+				return;
+			}
             if (players.Count() != numberOfMissionPlayers) 
             {
                 // the number of mission players does not match
 				var message = "💢 The number of mission players in this round has to be " 
                     + numberOfMissionPlayers + ".";
                 SMSPlayer(player, message);
-            }
-            else if (!player.Equals(this.ActiveGame.Rounds.OrderBy(r => r.RoundNumber).Last().Leader))
-            {
-                //  the player who sent the message does not match
-				var message = "💢 You are not the leader! SMS is expensive!";
-                SMSPlayer(player, message);
-            }
-            else if (!this.ActiveGame.GameState.Equals(Game.GameStates.SelectMissionPlayers)) 
-            {
-                //  the game state does not match
-				var message = "💢 Invalid command at this time.";
-                SMSPlayer(player, message);
+				return;
             }
             for (int i = 0; i < numberOfMissionPlayers; i++ )
             {
@@ -252,15 +255,12 @@ namespace ResistanceSMS.Controllers
                 if (playerCand == null) 
                 {
                     //  the candidate does not exist
-					var message = "💢 The name you typed in doesn't exist.";
+					var message = "💢 The name '" + candidate + "' doesn't exist.";
                     SMSPlayer(player, message);
-                    break;
+					return;
                 }
-                else
-                {
-                    // add him to the mission players list
-                    this.ActiveGame.RoundsOrdered.Last().MissionPlayers.Add(playerCand);
-                }
+                // add him to the mission players list
+                this.ActiveGame.RoundsOrdered.Last().MissionPlayers.Add(playerCand);
             }
 			//increment
 		}
