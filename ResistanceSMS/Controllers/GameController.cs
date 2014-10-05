@@ -300,6 +300,15 @@ namespace ResistanceSMS.Controllers
 		/// </summary>
 		public void CheckRejected()
 		{
+            if (this.ActiveGame.RoundsOrdered.Last().VoteMissionApprove.Count
+                > this.ActiveGame.RoundsOrdered.Last().VoteMissionReject.Count)
+            {
+                this.ActiveGame.RoundsOrdered.Last().NumRejections++;
+            }
+            else if (this.ActiveGame.RoundsOrdered.Last().NumRejections == 5)
+            {
+                //end game
+            }
 
 		}
 
@@ -321,9 +330,26 @@ namespace ResistanceSMS.Controllers
 		/// </summary>
 		/// <param name="player"></param>
 		/// <param name="vote"></param>
-		public void CheckPassOrFail(Player player, Boolean vote)
+		public void CheckPassOrFail(Player playerRef, Boolean vote)
 		{
-
+            var player = _Db.Players.Where(p => p.PlayerId == playerRef.PlayerId).FirstOrDefault();
+            if (vote)
+            {
+                if (this.ActiveGame.RoundsOrdered.Last().VoteMissionFail.Contains(player))
+                {
+                    this.ActiveGame.RoundsOrdered.Last().VoteMissionFail.Remove(player);
+                }
+                this.ActiveGame.RoundsOrdered.Last().VoteMissionPass.Add(player);
+            }
+            else
+            {
+                if (this.ActiveGame.RoundsOrdered.Last().VoteMissionPass.Contains(player))
+                {
+                    this.ActiveGame.RoundsOrdered.Last().VoteMissionPass.Remove(player);
+                }
+                this.ActiveGame.RoundsOrdered.Last().VoteMissionFail.Add(player);
+            }
+            _Db.SaveChanges();
 		}
 
 		/// <summary>
