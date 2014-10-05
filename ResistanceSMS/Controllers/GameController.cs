@@ -396,7 +396,7 @@ namespace ResistanceSMS.Controllers
 			this.ActiveGame.Players.Where(p => p.PlayerId == player.PlayerId).First().Name = name;
 			player.Name = name;
 			String message = "😮 " + oldName + " has changed their name to '" + name + "'";
-
+			this._Db.SaveChanges();
 			this.SMSPlayerList(this.ActiveGame.Players, message);
 		}
 
