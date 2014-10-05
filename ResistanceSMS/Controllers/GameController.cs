@@ -114,8 +114,7 @@ namespace ResistanceSMS.Controllers
 				&& toState == Game.GameStates.VoteMissionPass)
 			{
 				// transition from VoteMissionApprove to VoteMissionPass
-              
-              
+				SendPassOrFailMessage();
 			}
 			else if (toState == Game.GameStates.GameEnd)
 			{
@@ -320,6 +319,7 @@ namespace ResistanceSMS.Controllers
 			{
 				round.VoteMissionReject.Add(player);
 			}
+			SMSPlayer(player, "👌 Your vote has been recorded.");
 			_Db.SaveChanges();
 			if (round.VoteMissionReject.Count + round.VoteMissionApprove.Count == this.ActiveGame.Players.Count)
 			{
@@ -362,23 +362,32 @@ namespace ResistanceSMS.Controllers
 		public void CheckPassOrFail(Player playerRef, Boolean vote)
 		{
             var player = _Db.Players.Where(p => p.PlayerId == playerRef.PlayerId).FirstOrDefault();
+			this.ActiveGame.RoundsOrdered.Last().VoteMissionFail.Remove(player);
+			this.ActiveGame.RoundsOrdered.Last().VoteMissionPass.Remove(player);
             if (vote)
             {
-                if (this.ActiveGame.RoundsOrdered.Last().VoteMissionFail.Contains(player))
-                {
-                    this.ActiveGame.RoundsOrdered.Last().VoteMissionFail.Remove(player);
-                }
                 this.ActiveGame.RoundsOrdered.Last().VoteMissionPass.Add(player);
             }
             else
             {
-                if (this.ActiveGame.RoundsOrdered.Last().VoteMissionPass.Contains(player))
-                {
-                    this.ActiveGame.RoundsOrdered.Last().VoteMissionPass.Remove(player);
-                }
                 this.ActiveGame.RoundsOrdered.Last().VoteMissionFail.Add(player);
             }
             _Db.SaveChanges();
+			var round = this.ActiveGame.RoundsOrdered.Last();
+			if (round.VoteMissionPass.Count + round.VoteMissionFail.Count == round.MissionPlayers.Count)
+			{
+				if (round.VoteMissionFail.Count > 0)
+				{
+					SMSPlayerList(this.ActiveGame.Players, "👿 Mission FAILED w/ " + round.VoteMissionPass.Count + " passes, " + round.VoteMissionFail.Count + " fails.");
+					this.ActiveGame.SpyScore++;
+				}
+				else
+				{
+					SMSPlayerList(this.ActiveGame.Players, "😎 Mission PASSED w/ " + round.VoteMissionPass.Count + " passes, " + round.VoteMissionFail.Count + " fails.");
+					this.ActiveGame.ResistanceScore++;
+				}
+				StateTransition(Game.GameStates.SelectMissionPlayers);
+			}
 		}
 
 		/// <summary>
