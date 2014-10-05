@@ -293,7 +293,14 @@ namespace ResistanceSMS.Controllers
 		/// <param name="name"></param>
 		public void ChangeName(Player player, String name)
 		{
+			//TODO: check work
+			//TODO: check name collision, check name validity (should be handled
+			//		by parser anyways)
+			String oldName = player.Name;
+			player.Name = name;
+			String message = player.Name + "has changed their name to " + name;
 
+			SMSPlayerList(this.ActiveGame.Players, message);
 		}
 
 		/// <summary>
