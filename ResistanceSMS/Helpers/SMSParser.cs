@@ -120,7 +120,7 @@ namespace ResistanceSMS.Helpers
 		public Boolean ParseJoin(Player player, String[] input)
 		{
 			//check if there are params
-			if (input.Length <= 0)
+			if (input.Length == null || input[0].Equals(""))
 			{
 				throw new Exception("Exception at ParseJoin, params cannot be empty");
 			}
