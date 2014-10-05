@@ -65,6 +65,7 @@ namespace ResistanceSMS.Controllers
 				db.Players.RemoveRange(db.Players);
 				db.Rounds.RemoveRange(db.Rounds);
 				db.Games.RemoveRange(db.Games);
+				db.SaveChanges();
 			}
 			return Request.CreateResponse(HttpStatusCode.OK);
 		}

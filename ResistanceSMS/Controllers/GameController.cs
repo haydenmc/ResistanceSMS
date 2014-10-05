@@ -174,7 +174,10 @@ namespace ResistanceSMS.Controllers
 			var leaderPlayer = lastRound.Leader;
             var message = leaderPlayer.Name +  " is the mission leader for this round.";
             SMSPlayerList(this.ActiveGame.Players, message);
-			message = "🌟 Select mission players by texting 'Put [name], [name], etc.'";
+			var roundNumber = lastRound.RoundNumber;
+			var playerNumber = this.ActiveGame.Players.Count;
+			int numberOfMissionPlayers = missionPlayerNumber[roundNumber, playerNumber - 5];
+			message = "🌟 Select " + numberOfMissionPlayers + " mission players by texting 'Put [name], [name], etc.'";
 			SMSPlayer(leaderPlayer, message);
         }
 
@@ -249,6 +252,7 @@ namespace ResistanceSMS.Controllers
                 SMSPlayer(player, message);
 				return;
             }
+			this.ActiveGame.RoundsOrdered.Last().MissionPlayers.Clear();
             for (int i = 0; i < numberOfMissionPlayers; i++ )
             {
                 String candidate = players[i];
@@ -263,6 +267,9 @@ namespace ResistanceSMS.Controllers
                 // add him to the mission players list
                 this.ActiveGame.RoundsOrdered.Last().MissionPlayers.Add(playerCand);
             }
+			var playerNames = this.ActiveGame.RoundsOrdered.Last().MissionPlayers.Select(x => x.Name).Aggregate((current, next) => current + ", " + next);
+			SMSPlayerList(this.ActiveGame.Players, playerNames + " have been selected.");
+			StateTransition(Game.GameStates.VoteMissionApprove);
 			//increment
 		}
         /// <summary>
