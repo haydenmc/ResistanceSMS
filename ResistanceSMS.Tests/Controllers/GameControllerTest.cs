@@ -29,6 +29,71 @@ namespace ResistanceSMS.Tests.Controllers
         }
 
         [TestMethod]
+        public void TestPassOrFail()
+        {
+            Game g = new Game()
+            {
+                CreateTime = DateTimeOffset.Now,
+                GameState = Game.GameStates.Waiting,
+                GameId = Guid.NewGuid(),
+                Players = new List<Player>()
+                {
+                    new Player() {
+                        PlayerId = Guid.NewGuid(),
+                        TurnOrder = 0
+                    },
+                    new Player() {
+                        PlayerId = Guid.NewGuid(),
+                        TurnOrder = 1
+                    },
+                    new Player() {
+                        PlayerId = Guid.NewGuid(),
+                        TurnOrder = 2
+                    },
+                    new Player() {
+                        PlayerId = Guid.NewGuid(),
+                        TurnOrder = 3
+                    },
+                    new Player() {
+                        PlayerId = Guid.NewGuid(),
+                        TurnOrder = 4
+                    }
+                },
+                Rounds = new List<Round>()
+                {
+                    new Round() {
+                        RoundId = Guid.NewGuid(),
+                        VoteMissionPass = new List<Player>(),
+                        VoteMissionFail = new List<Player>()
+                    }
+                }
+            };
+            this.db.Games.Add(g);
+
+            this.db.SaveChanges();
+            //initialize things
+            GameController gc = new GameController(g);
+            var p = gc.ActiveGame.Players.Last();
+            var voteF = gc.ActiveGame.RoundsOrdered.Last().VoteMissionFail;
+            var voteP = gc.ActiveGame.RoundsOrdered.Last().VoteMissionPass;
+            //test lists empty
+            Assert.IsTrue(voteF.Count <= 0, "Fail not empty");
+            Assert.IsTrue(voteP.Count <= 0, "Pass not empty");
+            //test add player to vote pass
+            gc.CheckPassOrFail(p, true);
+            Assert.IsTrue(voteF.Count <= 0, "Fail not empty, 2");
+            Assert.IsTrue(voteP.Contains(p), "Pass !contain player, 2");
+            //test add player to vote fail/remove from false
+            gc.CheckPassOrFail(p, false);
+            Assert.IsTrue(voteF.Contains(p), "Fail not null, 3");
+            Assert.IsTrue(voteP.Count <= 0, "Pass !contain player, 3");
+            //test add player to vote pass/remove from true
+            gc.CheckPassOrFail(p, true);
+            Assert.IsTrue(voteF.Count <= 0, "Fail not null, 4");
+            Assert.IsTrue(voteP.Contains(p), "Pass !contain player, 4");
+        }
+
+        [TestMethod]
         public void TestTeamAssignment()
         {
             Game g = new Game()
@@ -75,7 +140,8 @@ namespace ResistanceSMS.Tests.Controllers
             Assert.IsTrue(gc.ActiveGame.ResistancePlayers.Count == 3);
             Assert.IsTrue(gc.ActiveGame.Players.Count == 5);
             var playerList = gc.ActiveGame.Players.OrderBy(p => p.TurnOrder).ToList();
-            for (int i=0;i<playerList.Count;i++) {
+            for (int i = 0; i < playerList.Count; i++)
+            {
                 var player = playerList[i];
                 Assert.IsTrue(player.TurnOrder == i, "Players are not in correct turn order.");
             }
