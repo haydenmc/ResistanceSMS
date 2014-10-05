@@ -6,6 +6,7 @@ using ResistanceSMS.Controllers;
 using System.Linq;
 using System.Data.Entity;
 using System.IO;
+using ResistanceSMS.Tests.Utils;
 
 namespace ResistanceSMS.Tests.Controllers
 {
@@ -196,7 +197,8 @@ namespace ResistanceSMS.Tests.Controllers
         }
         [TestMethod]
         public void SelectMissionPlayersTest() {
-            Player creator = new Player()
+
+            /*Player creator = new Player()
             {
                 PlayerId = Guid.NewGuid(),
                 Name = "Lucas",
@@ -233,8 +235,11 @@ namespace ResistanceSMS.Tests.Controllers
                 },
                 Rounds = new List<Round>(),
                 GameId = Guid.NewGuid()
-            };
-            this.db.Games.Add(g);
+            };*/
+            Player creator = TestUtils.GeneratePlayerWithGame(this.db);
+            Game g = creator.CurrentGame;
+            g.Rounds.Clear(); // Make sure we don't have any pre-genned routes
+           // this.db.Games.Add(g);
             this.db.SaveChanges();
             GameController gc = new GameController(g);
             gc.StateTransition(Game.GameStates.SelectMissionPlayers);

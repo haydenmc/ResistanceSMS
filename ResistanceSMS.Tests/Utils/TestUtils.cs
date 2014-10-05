@@ -14,6 +14,7 @@ namespace ResistanceSMS.Tests.Utils
 			var creator = new Player()
 			{
 				PlayerId = Guid.NewGuid(),
+                Name = "Lucas",
 				TurnOrder = 0
 			};
 			db.Players.Add(creator);
@@ -30,18 +31,22 @@ namespace ResistanceSMS.Tests.Utils
                     creator,
                     new Player() {
                         PlayerId = Guid.NewGuid(),
+                        Name = "Hayden",
                         TurnOrder = 1
                     },
                     new Player() {
                         PlayerId = Guid.NewGuid(),
+                         Name = "Darren",
                         TurnOrder = 2
                     },
                     new Player() {
                         PlayerId = Guid.NewGuid(),
+                         Name = "Corbin",
                         TurnOrder = 3
                     },
                     new Player() {
                         PlayerId = Guid.NewGuid(),
+                         Name = "Matts",
                         TurnOrder = 4
                     }
                 },

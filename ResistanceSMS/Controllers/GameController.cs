@@ -179,7 +179,19 @@ namespace ResistanceSMS.Controllers
 
 		public void CreateNewRound()
 		{
-            this.ActiveGame.Rounds.Add(new Round());
+            this.ActiveGame.Rounds.Add(new Round()
+            {
+                RoundId = Guid.NewGuid(),
+                Game = this.ActiveGame,
+                MissionPlayers = new List<Player>(),
+                NumRejections = 0,
+                MissionPassed = false,
+                RoundNumber = this.ActiveGame.Rounds.Count,
+                VoteMissionApprove = new List<Player>(),
+                VoteMissionReject = new List<Player>(),
+                VoteMissionPass = new List<Player>(),
+                VoteMissionFail = new List<Player>()
+            });
 		}
 
 		/// <summary>
@@ -210,7 +222,7 @@ namespace ResistanceSMS.Controllers
 		/// <param name="players"></param>
 		public void SelectMissionPlayers(Player player, String[] players)
 		{
-            var lastRound = this.ActiveGame.Rounds.OrderBy(r => r.RoundNumber).Last();
+            var lastRound = this.ActiveGame.RoundsOrdered.Last();
             var roundNumber = lastRound.RoundNumber;
             var playerNumber = this.ActiveGame.Players.Count;
             int numberOfMissionPlayers = missionPlayerNumber[roundNumber, playerNumber-5];
@@ -236,8 +248,8 @@ namespace ResistanceSMS.Controllers
             for (int i = 0; i < numberOfMissionPlayers; i++ )
             {
                 String candidate = players[i];
-                int check = checkCandidate(candidate);
-                if (check == -1) 
+                Player playerCand = this.ActiveGame.Players.Where(x => x.Name.ToLower() == candidate.ToLower()).FirstOrDefault();
+                if (playerCand == null) 
                 {
                     //  the candidate does not exist
 					var message = "💢 The name you typed in doesn't exist.";
@@ -247,9 +259,7 @@ namespace ResistanceSMS.Controllers
                 else
                 {
                     // add him to the mission players list
-                    Player playerCand = this.ActiveGame.Players.ElementAt(check);
-                    this.ActiveGame.Rounds.OrderBy(r => r.RoundNumber).Last()
-                        .MissionPlayers.Add(playerCand);
+                    this.ActiveGame.RoundsOrdered.Last().MissionPlayers.Add(playerCand);
                 }
             }
 			//increment
