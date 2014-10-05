@@ -130,17 +130,20 @@ namespace ResistanceSMS.Tests.Controllers
         }
         [TestMethod]
         public void SelectMissionPlayersTest() {
+            Player creator = new Player()
+            {
+                PlayerId = Guid.NewGuid(),
+                Name = "Lucas",
+                TurnOrder = 0
+            };
             Game g = new Game()
             {
+                Creator = creator,
                 CreateTime = DateTimeOffset.Now,
                 GameState = Game.GameStates.Waiting,
                 Players = new List<Player>()
                 {
-                    new Player() {
-                        PlayerId = Guid.NewGuid(),
-                        Name = "Lucas",
-                        TurnOrder = 0
-                    },
+                    creator,
                     new Player() {
                         PlayerId = Guid.NewGuid(),
                         Name = "Darren",
@@ -162,12 +165,8 @@ namespace ResistanceSMS.Tests.Controllers
                         TurnOrder = 4
                     }
                 },
-                Rounds = new List<Round>()
-                {
-                    new Round() {
-                        RoundId = Guid.NewGuid()
-                    }
-                }
+                Rounds = new List<Round>(),
+                GameId = Guid.NewGuid()
             };
             this.db.Games.Add(g);
             this.db.SaveChanges();
