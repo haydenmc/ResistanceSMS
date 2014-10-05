@@ -308,7 +308,7 @@ namespace ResistanceSMS.Controllers
             if (this.ActiveGame.RoundsOrdered.Last().VoteMissionApprove.Count
                 > this.ActiveGame.RoundsOrdered.Last().VoteMissionReject.Count)
             {
-                //this.ActiveGame.RoundsOrdered.Last().NumRejected++;
+                this.ActiveGame.RoundsOrdered.Last().NumRejections++;
             }
             else if (this.ActiveGame.RoundsOrdered.Last().NumRejections == 5)
             {

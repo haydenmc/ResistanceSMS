@@ -35,6 +35,7 @@ namespace ResistanceSMS.Tests.Controllers
             {
                 CreateTime = DateTimeOffset.Now,
                 GameState = Game.GameStates.Waiting,
+                GameId = Guid.NewGuid(),
                 Players = new List<Player>()
                 {
                     new Player() {
@@ -70,19 +71,26 @@ namespace ResistanceSMS.Tests.Controllers
             this.db.Games.Add(g);
 
             this.db.SaveChanges();
-
+            //initialize things
             GameController gc = new GameController(g);
-            Assert.IsTrue(gc.ActiveGame.RoundsOrdered.Last().VoteMissionFail.Count <= 0, "Fail not empty");
-            Assert.IsTrue(gc.ActiveGame.RoundsOrdered.Last().VoteMissionPass.Count <= 0, "Pass not empty");
-            gc.CheckPassOrFail(gc.ActiveGame.Players.Last(), true);
-            Assert.IsTrue(gc.ActiveGame.RoundsOrdered.Last().VoteMissionFail.Count <= 0, "Fail not empty, 2");
-            Assert.IsTrue(gc.ActiveGame.RoundsOrdered.Last().VoteMissionPass.Contains(g.Players.Last()), "Pass !contain player, 2");
-            gc.CheckPassOrFail(gc.ActiveGame.Players.Last(), false);
-            Assert.IsTrue(gc.ActiveGame.RoundsOrdered.Last().VoteMissionFail.Contains(g.Players.Last()), "Fail not null, 3");
-            Assert.IsTrue(gc.ActiveGame.RoundsOrdered.Last().VoteMissionPass.Count <= 0, "Pass !contain player, 3");
-            gc.CheckPassOrFail(gc.ActiveGame.Players.Last(), true);
-            Assert.IsTrue(gc.ActiveGame.RoundsOrdered.Last().VoteMissionFail.Count <= 0, "Fail not null, 4");
-            Assert.IsTrue(gc.ActiveGame.RoundsOrdered.Last().VoteMissionPass.Contains(g.Players.Last()), "Pass !contain player, 4");
+            var p = gc.ActiveGame.Players.Last();
+            var voteF = gc.ActiveGame.RoundsOrdered.Last().VoteMissionFail;
+            var voteP = gc.ActiveGame.RoundsOrdered.Last().VoteMissionPass;
+            //test lists empty
+            Assert.IsTrue(voteF.Count <= 0, "Fail not empty");
+            Assert.IsTrue(voteP.Count <= 0, "Pass not empty");
+            //test add player to vote pass
+            gc.CheckPassOrFail(p, true);
+            Assert.IsTrue(voteF.Count <= 0, "Fail not empty, 2");
+            Assert.IsTrue(voteP.Contains(p), "Pass !contain player, 2");
+            //test add player to vote fail/remove from false
+            gc.CheckPassOrFail(p, false);
+            Assert.IsTrue(voteF.Contains(p), "Fail not null, 3");
+            Assert.IsTrue(voteP.Count <= 0, "Pass !contain player, 3");
+            //test add player to vote pass/remove from true
+            gc.CheckPassOrFail(p, true);
+            Assert.IsTrue(voteF.Count <= 0, "Fail not null, 4");
+            Assert.IsTrue(voteP.Contains(p), "Pass !contain player, 4");
         }
 
         [TestMethod]
