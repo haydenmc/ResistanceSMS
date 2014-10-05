@@ -161,7 +161,7 @@ namespace ResistanceSMS.Controllers
 
 		public void CreateNewRound()
 		{
-
+            this.ActiveGame.Rounds.Add(new Round());
 		}
 
 		/// <summary>
