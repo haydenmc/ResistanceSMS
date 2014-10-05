@@ -46,7 +46,7 @@ namespace ResistanceSMS.Controllers
 			var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 			var random = new Random();
 			var friendlyId = new string(
-				Enumerable.Repeat(chars, 8)
+				Enumerable.Repeat(chars, 4)
 							.Select(s => s[random.Next(s.Length)])
 							.ToArray());
 
