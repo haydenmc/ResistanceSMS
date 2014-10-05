@@ -197,7 +197,6 @@ namespace ResistanceSMS.Controllers
 		/// <param name="players"></param>
 		public void SelectMissionPlayers(Player player, String[] players)
 		{
-            
             var lastRound = this.ActiveGame.Rounds.OrderBy(r => r.RoundNumber).Last();
             var roundNumber = lastRound.RoundNumber;
             var playerNumber = this.ActiveGame.Players.Count;
@@ -205,22 +204,59 @@ namespace ResistanceSMS.Controllers
             if (players.Count() != numberOfMissionPlayers) 
             {
                 // the number of mission players does not match
-
+                var message = "The number of mission players in this round has to be " 
+                    + numberOfMissionPlayers + ".";
+                SMSPlayer(player, message);
             }
             else if (!player.Equals(this.ActiveGame.Rounds.OrderBy(r => r.RoundNumber).Last().Leader))
             {
                 //  the player who sent the message does not match
+                var message = "You are not the leader! SMS is expensive!";
+                SMSPlayer(player, message);
             }
-            //else if () 
+            else if (!this.ActiveGame.GameState.Equals(Game.GameStates.SelectMissionPlayers)) 
             {
-
+                //  the game state does not match
+                var message = "You did not send this message at the right time man.";
+                SMSPlayer(player, message);
             }
             for (int i = 0; i < numberOfMissionPlayers; i++ )
             {
                 String candidate = players[i];
+                int check = checkCandidate(candidate);
+                if (check == -1) 
+                {
+                    //  the candidate does not exist
+                    var message = "The name you typed in doesn't exist.";
+                    SMSPlayer(player, message);
+                    break;
+                }
+                else
+                {
+                    // add him to the mission players list
+                    Player playerCand = this.ActiveGame.Players.ElementAt(check);
+                    this.ActiveGame.Rounds.OrderBy(r => r.RoundNumber).Last()
+                        .MissionPlayers.Add(playerCand);
+                }
             }
 			//increment
 		}
+        /// <summary>
+        /// check if the candidate is in the player list
+        /// used in SelectMissionPlayers
+        /// </summary>
+        /// <param name="candidate"></param>
+        /// <returns></returns>
+        public int checkCandidate(String candidate)
+        {
+            for (int i = 0; i < this.ActiveGame.Players.Count(); i++ )
+            {
+                if (candidate.Equals(this.ActiveGame.Players.ElementAt(i))) {
+                    return i;
+                }
+            }
+            return -1;
+        }
 
 		/// <summary>
 		/// Sends a text message to all players to vote for poeple going on the
