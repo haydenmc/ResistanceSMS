@@ -9,25 +9,29 @@ namespace ResistanceSMS.Controllers
 {
 	public class GameController
 	{
-        private ApplicationDbContext _Db = new ApplicationDbContext();
-        private Guid _ActiveGameId;
-        public int[,] missionPlayerNumber = new int[,] 
-            { {2, 2, 2, 3, 3, 3}, 
-              {3, 3, 3, 4, 4, 4}, 
-              {2, 4, 3, 4, 4, 4}, 
-              {3, 3, 4, 5, 5, 5}, 
-              {3, 4, 4, 5, 5, 5} };
-        public Game ActiveGame
-        {
-            get
-            {
-                return _Db.Games.Where(g => g.GameId == this._ActiveGameId).FirstOrDefault();
-            }
-            set
-            {
-                this._ActiveGameId = value.GameId;
-            }
-        }
+		private ApplicationDbContext _Db = new ApplicationDbContext();
+		private Guid _ActiveGameId;
+		public int[,] missionPlayerNumber = new int[,] 
+		{
+			{2, 2, 2, 3, 3, 3}, 
+			{3, 3, 3, 4, 4, 4}, 
+			{2, 4, 3, 4, 4, 4}, 
+			{3, 3, 4, 5, 5, 5}, 
+			{3, 4, 4, 5, 5, 5}
+		};
+
+		public Game ActiveGame
+		{
+			get
+			{
+				return _Db.Games.Where(g => g.GameId == this._ActiveGameId).FirstOrDefault();
+			}
+			set
+			{
+				this._ActiveGameId = value.GameId;
+			}
+		}
+
 		public GameController(Game game)
 		{
 			if (game != null)
